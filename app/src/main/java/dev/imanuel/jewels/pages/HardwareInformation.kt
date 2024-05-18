@@ -17,15 +17,6 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import dev.imanuel.jewels.information.Device
 
 @Composable
-fun getDeviceType(): String {
-    return if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT) {
-        "Tablet"
-    } else {
-        "Smartphone"
-    }
-}
-
-@Composable
 fun HardwareInformation(device: Device) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, fill = false)) {
