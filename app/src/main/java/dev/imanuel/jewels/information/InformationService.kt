@@ -49,8 +49,8 @@ fun getRetrofit(serverSettings: ServerSettings): Retrofit {
 
 interface ApiService {
     @POST("api/device/phone")
-    suspend fun sendPhoneData(@Header("Authorization") token: String, @Body device: Device): Unit
+    suspend fun sendPhoneData(@Header("Authorization") token: String, @Body device: Device)
 
     @POST("api/device/watch")
-    suspend fun sendWatchData(@Header("Authorization") token: String, @Body device: Device): Unit
+    suspend fun sendWatchData(@Header("Authorization") token: String, @Body device: Device)
 }

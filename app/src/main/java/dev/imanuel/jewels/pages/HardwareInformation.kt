@@ -20,7 +20,7 @@ import dev.imanuel.jewels.information.Device
 import org.koin.compose.koinInject
 
 @Composable
-fun getDeviceType(context: Context): String {
+fun getDeviceType(): String {
     return if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT) {
         "Tablet"
     } else {
@@ -35,7 +35,7 @@ fun HardwareInformation(device: Device = koinInject()) {
             ElevatedCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        "Über das ${getDeviceType(LocalContext.current)}",
+                        "Über das ${getDeviceType()}",
                         style = MaterialTheme.typography.headlineMedium
                     )
                     if (device.hostname != null) {

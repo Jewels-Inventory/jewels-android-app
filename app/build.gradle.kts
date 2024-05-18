@@ -66,7 +66,7 @@ dependencies {
     implementation("androidx.compose.material3.adaptive:adaptive-android:1.0.0-beta01")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("androidx.work:work-runtime:2.9.0")
@@ -82,6 +82,6 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-navigation")
     implementation("io.insert-koin:koin-androidx-workmanager")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.2")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.2")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
