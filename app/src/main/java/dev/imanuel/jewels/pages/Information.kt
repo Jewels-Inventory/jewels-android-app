@@ -18,8 +18,10 @@ import androidx.work.WorkManager
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.SendDataWorker
 import dev.imanuel.jewels.information.Device
+import dev.imanuel.jewels.information.InformationCollector
 import dev.imanuel.jewels.utils.ServerSettings
 import dev.imanuel.jewels.utils.deleteSettings
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 enum class SelectedTab {
@@ -33,11 +35,20 @@ enum class SelectedTab {
 @Composable
 fun Information(
     context: Context = koinInject(),
-    device: Device = koinInject(),
+    collector: InformationCollector = koinInject(),
     serverSettings: ServerSettings = koinInject(),
     goToSetup: () -> Unit
 ) {
     var selectedItem by remember { mutableStateOf(SelectedTab.Jewels) }
+    var device by remember { mutableStateOf<Device?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(device) {
+        if (device == null) {
+            coroutineScope.launch {
+                device = collector.collect()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -119,24 +130,26 @@ fun Information(
             }
         }
     ) { innerPadding ->
-        when (selectedItem) {
-            SelectedTab.Jewels -> Column(modifier = Modifier.padding(innerPadding)) {
-                Text("Verbunden", style = MaterialTheme.typography.displayMedium)
-                Text(
-                    "Du bist mit ${serverSettings.host.replace("https://", "")} verbunden",
-                )
-            }
+        if (device != null) {
+            when (selectedItem) {
+                SelectedTab.Jewels -> Column(modifier = Modifier.padding(innerPadding)) {
+                    Text("Verbunden", style = MaterialTheme.typography.displayMedium)
+                    Text(
+                        "Du bist mit ${serverSettings.host.replace("https://", "")} verbunden",
+                    )
+                }
 
-            SelectedTab.Hardware -> Column(modifier = Modifier.padding(innerPadding)) {
-                HardwareInformation(device)
-            }
+                SelectedTab.Hardware -> Column(modifier = Modifier.padding(innerPadding)) {
+                    HardwareInformation(device!!)
+                }
 
-            SelectedTab.Storage -> Column(modifier = Modifier.padding(innerPadding)) {
-                StorageInformation(device)
-            }
+                SelectedTab.Storage -> Column(modifier = Modifier.padding(innerPadding)) {
+                    StorageInformation(device!!)
+                }
 
-            SelectedTab.Software -> Column(modifier = Modifier.padding(innerPadding)) {
-                SoftwareInformation(device)
+                SelectedTab.Software -> Column(modifier = Modifier.padding(innerPadding)) {
+                    SoftwareInformation(device!!)
+                }
             }
         }
     }

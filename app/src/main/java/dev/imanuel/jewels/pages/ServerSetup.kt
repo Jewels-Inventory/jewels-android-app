@@ -90,7 +90,13 @@ fun ServerSetup(
                         try {
                             cameraProvider.unbindAll()
 
-                            cameraProvider.bindToLifecycle(context as LifecycleOwner, cameraSelector, preview, imageCapture, imageAnalysis)
+                            cameraProvider.bindToLifecycle(
+                                context as LifecycleOwner,
+                                cameraSelector,
+                                preview,
+                                imageCapture,
+                                imageAnalysis
+                            )
                         } catch (exc: Exception) {
                             Log.e("DEBUG", "Use case binding failed", exc)
                         }
@@ -118,6 +124,7 @@ fun ServerSetup(
 }
 
 @androidx.compose.ui.tooling.preview.Preview
+@androidx.camera.core.ExperimentalGetImage
 @Composable
 fun ServerSetupreview() {
     ServerSetup { }

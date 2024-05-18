@@ -1,0 +1,9 @@
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Google Play"
+  lane :alpha do
+    gradle(task: "clean bundle", build_type: "release")
+    upload_to_play_store(track: "alpha")
+  end
+end

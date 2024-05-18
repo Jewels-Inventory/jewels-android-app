@@ -4,6 +4,19 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+val jewelsMajorVersion: Int by project
+val jewelsMinorVersion: Int by project
+
+fun computeVersionCode(): Int {
+    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "-1"
+    val versionCode = (jewelsMajorVersion * 100000) + (jewelsMinorVersion * 10000) + jewelsReleaseVersion.toInt()
+
+    print("Versionname is ${jewelsMajorVersion}.${jewelsMinorVersion}.${jewelsReleaseVersion}")
+    print("Versioncode is $versionCode")
+
+    return versionCode
+}
+
 android {
     namespace = "dev.imanuel.jewels"
     compileSdk = 34
@@ -21,10 +34,25 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("ANDROID_KEY_STOREFILE") ?: "/opt/secure/signing-key.jks")
+            storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: "key0"
+            keyPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+        }
+    }
+
     buildTypes {
-        release {
+        getByName("debug") {
+            isDebuggable = true
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        getByName("release") {
+            isDebuggable = false
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.2.0" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="dev.imanuel.jewels.MainActivity"
+                    boolean="true"/>
+                <entry
+                    name="dev.imanuel.jewels.BootReceiver"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.array.com_google_android_gms_fonts_certs_prod"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values-v23/font_certs.xml"
+            line="27"
+            column="19"
+            startOffset="2599"
+            endLine="27"
+            endColumn="65"
+            endOffset="2645"/>
+        <location id="R.color.black"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="8"
+            column="12"
+            startOffset="293"
+            endLine="8"
+            endColumn="24"
+            endOffset="305"/>
+        <location id="R.color.teal_700"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="7"
+            column="12"
+            startOffset="248"
+            endLine="7"
+            endColumn="27"
+            endOffset="263"/>
+        <location id="R.color.white"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="9"
+            column="12"
+            startOffset="335"
+            endLine="9"
+            endColumn="24"
+            endOffset="347"/>
+        <location id="R.color.purple_700"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="5"
+            column="12"
+            startOffset="156"
+            endLine="5"
+            endColumn="29"
+            endOffset="173"/>
+        <location id="R.color.purple_500"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="4"
+            column="12"
+            startOffset="109"
+            endLine="4"
+            endColumn="29"
+            endOffset="126"/>
+        <location id="R.array.com_google_android_gms_fonts_certs_dev"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values-v23/font_certs.xml"
+            line="22"
+            column="19"
+            startOffset="874"
+            endLine="22"
+            endColumn="64"
+            endOffset="919"/>
+        <location id="R.color.purple_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="3"
+            column="12"
+            startOffset="62"
+            endLine="3"
+            endColumn="29"
+            endOffset="79"/>
+        <entry
+            name="model"
+            string="array[com_google_android_gms_fonts_certs(D),com_google_android_gms_fonts_certs_prod(D),com_google_android_gms_fonts_certs_dev(D)],color[purple_200(D),black(D),teal_200(D),white(D),teal_700(D),purple_700(D),purple_500(D)],drawable[ic_storage(U),ic_logout(U),ic_jewels(U),ic_software(U),ic_hardware(U),ic_upload(U)],font[urbanist(R),albert_sans(R)],mipmap[ic_launcher_round(U),ic_launcher_foreground(U),ic_launcher_background(U),ic_launcher_monochrome(U),ic_launcher(U)],raw[supported_devices(U)],string[app_name(U)],style[Theme_Jewels(U)],xml[data_extraction_rules(U),backup_rules(U)];0^2^1,12^14^13,16^14^13^15;;;"/>
+        <location id="R.color.teal_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="6"
+            column="12"
+            startOffset="203"
+            endLine="6"
+            endColumn="27"
+            endOffset="218"/>
+        <location id="R.array.com_google_android_gms_fonts_certs"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values-v23/font_certs.xml"
+            line="18"
+            column="12"
+            startOffset="665"
+            endLine="18"
+            endColumn="53"
+            endOffset="706"/>
+    </map>
+
+</incidents>

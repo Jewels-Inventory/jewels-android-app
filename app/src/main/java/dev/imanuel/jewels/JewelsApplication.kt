@@ -3,7 +3,10 @@ package dev.imanuel.jewels
 import android.app.Application
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
-import dev.imanuel.jewels.information.*
+import dev.imanuel.jewels.information.ApiService
+import dev.imanuel.jewels.information.InformationCollector
+import dev.imanuel.jewels.information.InformationCollectorImpl
+import dev.imanuel.jewels.information.getRetrofit
 import dev.imanuel.jewels.utils.ServerSettings
 import dev.imanuel.jewels.utils.loadSettings
 import org.koin.android.ext.koin.androidContext
@@ -27,7 +30,6 @@ val appModule = module {
             null
         }
     }
-    factory<Device> { get<InformationCollector>().collect() }
     factory<ImageAnalysis> { ImageAnalysis.Builder().build() }
     factory<ImageCapture> { ImageCapture.Builder().build() }
     worker { SendDataWorker(get(), get(), get(), get(), get()) }

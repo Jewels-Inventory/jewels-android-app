@@ -13,12 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.imanuel.jewels.information.Device
-import org.koin.compose.koinInject
 
 @Composable
-fun StorageInformation(
-    device: Device = koinInject(),
-) {
+fun StorageInformation(device: Device) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, fill = false)) {
             device.drives?.forEach { drive ->

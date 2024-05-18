@@ -6,9 +6,11 @@ import android.content.Context
 import android.os.Build
 import android.os.storage.StorageManager
 import android.provider.Settings
-import android.provider.Settings.Secure
 import dev.imanuel.jewels.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.RandomAccessFile
+import java.util.*
 
 private data class RetailDeviceDetails(
     val manufacturer: String,
@@ -16,7 +18,7 @@ private data class RetailDeviceDetails(
 )
 
 interface InformationCollector {
-    fun collect(): Device
+    suspend fun collect(): Device
 }
 
 private const val CPU_INFO_DIR = "/sys/devices/system/cpu/"
@@ -49,14 +51,24 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
         }
     }
 
-    override fun collect(): Device {
+    private fun getId(): String {
+        val pref = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        val id = pref.getString("app_id", UUID.randomUUID().toString()) ?: UUID.randomUUID().toString()
+        pref.edit().putString("app_id", id).apply()
+
+        return id
+    }
+
+    override suspend fun collect(): Device {
         val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val storageStatsManager = context.getSystemService(Context.STORAGE_STATS_SERVICE) as StorageStatsManager
 
         val maxPath = "${CPU_INFO_DIR}cpu0/cpufreq/cpuinfo_max_freq"
         val cpuSpeed = try {
-            RandomAccessFile(maxPath, "r").use { it.readLine().toLong() / 1000f / 1000f }
+            withContext(Dispatchers.IO) {
+                RandomAccessFile(maxPath, "r").use { it.readLine().toLong() / 1000f / 1000f }
+            }
         } catch (e: Exception) {
             null
         }
@@ -148,7 +160,7 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
         val retailDevice = getRetailDeviceDetails(context)
 
         return Device(
-            Secure.ANDROID_ID,
+            getId(),
             Settings.Global.getString(context.contentResolver, "device_name"),
             retailDevice.retailName,
             retailDevice.manufacturer,

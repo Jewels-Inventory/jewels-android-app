@@ -33,7 +33,7 @@ fun Login(
                 title = {
                     Text("Anmelden")
                 },
-                scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
             )
         }
     ) { innerPadding ->

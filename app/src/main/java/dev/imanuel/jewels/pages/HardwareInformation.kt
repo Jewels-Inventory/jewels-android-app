@@ -1,6 +1,5 @@
 package dev.imanuel.jewels.pages
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,11 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.imanuel.jewels.information.Device
-import org.koin.compose.koinInject
 
 @Composable
 fun getDeviceType(): String {
@@ -29,7 +26,7 @@ fun getDeviceType(): String {
 }
 
 @Composable
-fun HardwareInformation(device: Device = koinInject()) {
+fun HardwareInformation(device: Device) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, fill = false)) {
             ElevatedCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp)) {
