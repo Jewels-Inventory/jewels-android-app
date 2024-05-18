@@ -1,43 +1,56 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package dev.imanuel.jewels
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.camera.core.ExperimentalGetImage
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dev.imanuel.jewels.pages.Information
+import dev.imanuel.jewels.pages.Login
+import dev.imanuel.jewels.pages.ServerSetup
 import dev.imanuel.jewels.ui.theme.JewelsTheme
+import dev.imanuel.jewels.utils.loadSettings
 
 class MainActivity : ComponentActivity() {
+    @ExperimentalGetImage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            JewelsTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
-                }
-            }
+            MainComposable()
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+@ExperimentalGetImage
+fun MainComposable() {
+    val navController = rememberNavController()
+    val settings = loadSettings(LocalContext.current)
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
     JewelsTheme {
-        Greeting("Android")
+        NavHost(
+            navController = navController,
+            startDestination = if (settings != null) {
+                "information"
+            } else {
+                "serverSetup"
+            }
+        ) {
+            composable("information") { Information(goToSetup = { navController.navigate("serverSetup") }) }
+            composable("serverSetup") { ServerSetup(goToLogin = { navController.navigate("login") }) }
+            composable("login") {
+                Login(
+                    goToInformation = { navController.navigate("information") },
+                    goToSetup = { navController.navigate("serverSetup") })
+            }
+        }
     }
 }
