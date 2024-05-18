@@ -12,10 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.imanuel.jewels.utils.Device
+import dev.imanuel.jewels.information.Device
+import org.koin.compose.koinInject
 
 @Composable
-fun StorageInformation(device: Device) {
+fun StorageInformation(
+    device: Device = koinInject(),
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, fill = false)) {
             device.drives?.forEach { drive ->

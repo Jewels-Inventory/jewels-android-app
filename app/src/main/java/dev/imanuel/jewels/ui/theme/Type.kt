@@ -3,8 +3,6 @@ package dev.imanuel.jewels.ui.theme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontVariation
-import androidx.compose.ui.text.font.FontWeight
 import dev.imanuel.jewels.R
 
 val bodyFontFamily = FontFamily(

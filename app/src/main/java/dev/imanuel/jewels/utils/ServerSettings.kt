@@ -4,8 +4,7 @@ import android.content.Context
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ServerSettings(val token: String, val host: String) {
-}
+data class ServerSettings(val token: String, val host: String)
 
 fun loadSettings(context: Context): ServerSettings? {
     val pref = context.getSharedPreferences("server-settings", Context.MODE_PRIVATE)

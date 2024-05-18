@@ -14,7 +14,7 @@ class BarcodeAnalyser(
     val callback: (settings: ServerSettings) -> Unit
 ) : ImageAnalysis.Analyzer {
     companion object {
-        val TAG = BarcodeAnalyser::class.java.simpleName
+        val TAG: String = BarcodeAnalyser::class.java.simpleName
     }
 
     private fun checkBarCodes(barcodes: List<Barcode>) {

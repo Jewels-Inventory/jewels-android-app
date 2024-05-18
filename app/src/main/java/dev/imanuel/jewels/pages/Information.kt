@@ -1,5 +1,7 @@
 package dev.imanuel.jewels.pages
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
@@ -7,13 +9,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import dev.imanuel.jewels.R
-import dev.imanuel.jewels.utils.collectPhoneOrTabletDeviceInformation
-import dev.imanuel.jewels.utils.loadSettings
+import dev.imanuel.jewels.SendDataWorker
+import dev.imanuel.jewels.information.Device
+import dev.imanuel.jewels.utils.ServerSettings
+import dev.imanuel.jewels.utils.deleteSettings
+import org.koin.compose.koinInject
 
 enum class SelectedTab {
     Jewels,
@@ -22,13 +29,14 @@ enum class SelectedTab {
     Software
 }
 
-fun sendData() {}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Information(goToSetup: () -> Unit) {
-    val device = collectPhoneOrTabletDeviceInformation(LocalContext.current)
-    val serverSettings = loadSettings(LocalContext.current)
+fun Information(
+    context: Context = koinInject(),
+    device: Device = koinInject(),
+    serverSettings: ServerSettings = koinInject(),
+    goToSetup: () -> Unit
+) {
     var selectedItem by remember { mutableStateOf(SelectedTab.Jewels) }
 
     Scaffold(
@@ -43,7 +51,10 @@ fun Information(goToSetup: () -> Unit) {
                 },
                 scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
                 actions = {
-                    IconButton(onClick = goToSetup) {
+                    IconButton(onClick = {
+                        deleteSettings(context)
+                        goToSetup()
+                    }) {
                         Icon(ImageVector.vectorResource(R.drawable.ic_logout), "Gerät entfernen")
                     }
                 }
@@ -55,7 +66,13 @@ fun Information(goToSetup: () -> Unit) {
             ExtendedFloatingActionButton(
                 { Text("Infos hochladen") },
                 { Icon(ImageVector.vectorResource(R.drawable.ic_upload), "Infos hochladen") },
-                { sendData() }
+                {
+                    val request = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
+                        Data.Builder().putString("type", "phone").build()
+                    ).build()
+                    WorkManager.getInstance(context).enqueue(request)
+                    Toast.makeText(context, "Daten werden hochgeladen", Toast.LENGTH_LONG)
+                }
             )
         },
         bottomBar = {
@@ -106,7 +123,7 @@ fun Information(goToSetup: () -> Unit) {
             SelectedTab.Jewels -> Column(modifier = Modifier.padding(innerPadding)) {
                 Text("Verbunden", style = MaterialTheme.typography.displayMedium)
                 Text(
-                    "Du bist mit ${serverSettings?.host?.replace("https://", "")} verbunden",
+                    "Du bist mit ${serverSettings.host.replace("https://", "")} verbunden",
                 )
             }
 
@@ -128,5 +145,5 @@ fun Information(goToSetup: () -> Unit) {
 @Preview
 @Composable
 fun InformationPreview() {
-    Information { }
+    Information {}
 }

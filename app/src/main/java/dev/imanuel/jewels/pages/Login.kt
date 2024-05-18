@@ -1,25 +1,28 @@
 package dev.imanuel.jewels.pages
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.imanuel.jewels.utils.ServerSettings
 import dev.imanuel.jewels.utils.deleteSettings
-import dev.imanuel.jewels.utils.loadSettings
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(goToSetup: () -> Unit, goToInformation: () -> Unit) {
-    val context = LocalContext.current
-    val serverSettings = loadSettings(context)
-
+fun Login(
+    context: Context = koinInject(),
+    serverSettings: ServerSettings = koinInject(),
+    goToSetup: () -> Unit,
+    goToInformation: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,7 +49,7 @@ fun Login(goToSetup: () -> Unit, goToInformation: () -> Unit) {
                     buildAnnotatedString {
                         append("Du hast einen Code für ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(serverSettings?.host?.replace("https://", ""))
+                            append(serverSettings.host.replace("https://", ""))
                         }
                         append(" gescannt.")
                     },
@@ -78,5 +81,5 @@ fun Login(goToSetup: () -> Unit, goToInformation: () -> Unit) {
 @Preview
 @Composable
 fun LoginPreview() {
-    Login({ }) { }
+    Login(goToSetup = { }) { }
 }

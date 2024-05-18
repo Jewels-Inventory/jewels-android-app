@@ -16,7 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
-import dev.imanuel.jewels.utils.Device
+import dev.imanuel.jewels.information.Device
+import org.koin.compose.koinInject
 
 @Composable
 fun getDeviceType(context: Context): String {
@@ -28,7 +29,7 @@ fun getDeviceType(context: Context): String {
 }
 
 @Composable
-fun HardwareInformation(device: Device) {
+fun HardwareInformation(device: Device = koinInject()) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, fill = false)) {
             ElevatedCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp)) {
