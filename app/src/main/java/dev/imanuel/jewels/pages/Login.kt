@@ -11,8 +11,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.imanuel.jewels.utils.ServerSettings
-import dev.imanuel.jewels.utils.deleteSettings
+import com.google.android.gms.wearable.PutDataRequest
+import com.google.android.gms.wearable.Wearable
+import dev.imanuel.jewels.detection.ServerSettings
+import dev.imanuel.jewels.detection.deleteSettings
+import kotlinx.serialization.json.Json
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,8 +24,10 @@ fun Login(
     context: Context = koinInject(),
     serverSettings: ServerSettings = koinInject(),
     goToSetup: () -> Unit,
-    goToInformation: () -> Unit
+    goToJewels: () -> Unit
 ) {
+    val dataClient by lazy { Wearable.getDataClient(context) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -69,7 +74,13 @@ fun Login(
                     }, modifier = Modifier.padding(end = 16.dp)) {
                         Text("Zurück zum Scanner")
                     }
-                    Button(onClick = goToInformation) {
+                    Button(onClick = {
+                        val request = PutDataRequest.create("/settings").setUrgent().apply {
+                            data = Json.encodeToString(ServerSettings.serializer(), serverSettings).toByteArray()
+                        }
+                        dataClient.putDataItem(request)
+                        goToJewels()
+                    }) {
                         Text("Anmelden")
                     }
                 }

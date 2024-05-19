@@ -3,7 +3,6 @@
 package dev.imanuel.jewels.pages
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,38 +12,40 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.navigation.NavController
 import dev.imanuel.jewels.R
-import dev.imanuel.jewels.SendDataWorker
-import dev.imanuel.jewels.information.Device
-import dev.imanuel.jewels.information.InformationCollector
-import dev.imanuel.jewels.utils.ServerSettings
-import dev.imanuel.jewels.utils.deleteSettings
+import dev.imanuel.jewels.detection.information.Device
+import dev.imanuel.jewels.detection.information.DeviceType
+import dev.imanuel.jewels.pages.components.BottomNavBar
+import dev.imanuel.jewels.pages.components.TopBarActions
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 enum class SelectedTab {
-    Jewels, Hardware, Storage, Software
+    Hardware,
+    Storage,
+    Software
 }
 
 @Composable
 fun AppBar(
-    device: Device?,
-    context: Context = koinInject(),
-    goToSetup: () -> Unit
+    selectedDevice: Device?,
+    goToSetup: () -> Unit,
 ) {
     TopAppBar(
         title = {
-            Text("Dein ${device?.model ?: getDeviceType()}")
+            if (selectedDevice?.type == DeviceType.Watch) {
+                Text("Deine ${selectedDevice.model}")
+            } else {
+                Text("Dein ${selectedDevice?.model ?: getHandheldType()}")
+            }
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
         colors = TopAppBarDefaults.topAppBarColors(
@@ -52,18 +53,7 @@ fun AppBar(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         actions = {
-            IconButton(
-                onClick = {
-                    deleteSettings(context)
-                    goToSetup()
-                },
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Icon(ImageVector.vectorResource(R.drawable.ic_logout), "Gerät entfernen")
-            }
+            TopBarActions(goToSetup = goToSetup)
         })
 }
 
@@ -76,20 +66,6 @@ fun Tabs(state: PagerState, device: Device?) {
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
     ) {
-        Tab(
-            icon = {
-                Icon(
-                    ImageVector.vectorResource(R.drawable.ic_jewels), contentDescription = "Jewels"
-                )
-            },
-            text = { Text("Jewels", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-            selected = state.currentPage == SelectedTab.Jewels.ordinal,
-            onClick = {
-                coroutineScope.launch {
-                    state.animateScrollToPage(SelectedTab.Jewels.ordinal)
-                }
-            },
-        )
         Tab(
             icon = {
                 Icon(
@@ -141,71 +117,50 @@ fun Tabs(state: PagerState, device: Device?) {
 @Composable
 fun Information(
     context: Context = koinInject(),
-    collector: InformationCollector = koinInject(),
-    serverSettings: ServerSettings = koinInject(),
+    device: Device,
+    navController: NavController,
+    hasWatch: Boolean,
     goToSetup: () -> Unit
 ) {
-    var device by remember { mutableStateOf<Device?>(null) }
-    val coroutineScope = rememberCoroutineScope()
-    val tabState = rememberPagerState(initialPage = SelectedTab.Jewels.ordinal) {
+    val tabState = rememberPagerState(initialPage = SelectedTab.Hardware.ordinal) {
         SelectedTab.entries.size
     }
-
-    LaunchedEffect(device) {
-        if (device == null) {
-            coroutineScope.launch {
-                device = collector.collect()
-            }
-        }
-    }
+    val handheldType = getHandheldType()
 
     Scaffold(
+        contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp),
         topBar = {
             Column {
                 AppBar(device, goToSetup = goToSetup)
                 Tabs(tabState, device)
             }
         },
-        contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp),
-        floatingActionButtonPosition = FabPosition.End,
+        bottomBar = {
+            BottomNavBar(hasWatch, navController)
+        },
         floatingActionButton = {
-            ExtendedFloatingActionButton({ Text("Infos hochladen") },
+            ExtendedFloatingActionButton({
+                Text("Infos hochladen")
+            },
                 { Icon(ImageVector.vectorResource(R.drawable.ic_upload), "Infos hochladen") },
-                {
-                    val request = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
-                        Data.Builder().putString("type", "phone").build()
-                    ).build()
-                    WorkManager.getInstance(context).enqueue(request)
-                    Toast.makeText(context, "Daten werden hochgeladen", Toast.LENGTH_LONG)
-                })
-        }) { innerPadding ->
+                { UploadData(handheldType, device, context) })
+        },
+        floatingActionButtonPosition = FabPosition.End
+    ) { innerPadding ->
         HorizontalPager(state = tabState, modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when (SelectedTab.entries[it]) {
-                SelectedTab.Jewels -> Column(modifier = Modifier.padding(top = 16.dp).fillMaxSize()) {
-                    Text("Verbunden", style = MaterialTheme.typography.displayMedium)
-                    Text(
-                        "Du bist mit ${serverSettings.host.replace("https://", "")} verbunden",
-                    )
-                }
-
                 SelectedTab.Hardware -> Column(modifier = Modifier.fillMaxSize()) {
-                    HardwareInformation(device!!)
+                    HardwareInformation(device)
                 }
 
                 SelectedTab.Storage -> Column(modifier = Modifier.fillMaxSize()) {
-                    StorageInformation(device!!)
+                    StorageInformation(device)
                 }
 
                 SelectedTab.Software -> Column(modifier = Modifier.fillMaxSize()) {
-                    SoftwareInformation(device!!)
+                    SoftwareInformation(device)
                 }
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun InformationPreview() {
-    Information {}
 }

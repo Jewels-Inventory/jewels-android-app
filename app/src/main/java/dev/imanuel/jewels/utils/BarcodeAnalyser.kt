@@ -8,6 +8,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import dev.imanuel.jewels.detection.ServerSettings
 import kotlinx.serialization.json.Json
 
 class BarcodeAnalyser(

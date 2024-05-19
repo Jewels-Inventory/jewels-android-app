@@ -25,7 +25,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.imanuel.jewels.utils.BarcodeAnalyser
-import dev.imanuel.jewels.utils.saveSettings
+import dev.imanuel.jewels.detection.saveSettings
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import java.util.concurrent.Executors

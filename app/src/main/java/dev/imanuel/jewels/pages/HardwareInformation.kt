@@ -9,12 +9,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowWidthSizeClass
-import dev.imanuel.jewels.information.Device
+import dev.imanuel.jewels.detection.information.Device
+import dev.imanuel.jewels.detection.information.DeviceType
 
 @Composable
 fun HardwareInformation(device: Device) {
@@ -23,12 +22,16 @@ fun HardwareInformation(device: Device) {
             ElevatedCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        "Über das ${getDeviceType()}",
+                        if (device.type == DeviceType.Handheld) {
+                            "Über das ${getHandheldType()}"
+                        } else {
+                            "Über die Smartwatch"
+                        },
                         style = MaterialTheme.typography.headlineMedium
                     )
                     if (device.hostname != null) {
                         Text("Name", style = MaterialTheme.typography.labelMedium)
-                        Text(device.hostname, style = MaterialTheme.typography.bodyMedium)
+                        Text(device.hostname!!, style = MaterialTheme.typography.bodyMedium)
                     }
 
                     Text("Hersteller", style = MaterialTheme.typography.labelMedium)
@@ -39,20 +42,21 @@ fun HardwareInformation(device: Device) {
                 }
             }
             if (device.cpu != null) {
+                val cpu = device.cpu!!
                 ElevatedCard(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("Prozessor", style = MaterialTheme.typography.headlineMedium)
                         Text("Hersteller", style = MaterialTheme.typography.labelMedium)
-                        Text(device.cpu.manufacturer, style = MaterialTheme.typography.bodyMedium)
+                        Text(cpu.manufacturer, style = MaterialTheme.typography.bodyMedium)
 
                         Text("Modell", style = MaterialTheme.typography.labelMedium)
-                        Text(device.cpu.model, style = MaterialTheme.typography.bodyMedium)
+                        Text(cpu.model, style = MaterialTheme.typography.bodyMedium)
 
                         Text("Anzahl Kerne", style = MaterialTheme.typography.labelMedium)
-                        Text(device.cpu.cores.toString(), style = MaterialTheme.typography.bodyMedium)
+                        Text(cpu.cores.toString(), style = MaterialTheme.typography.bodyMedium)
 
                         Text("Geschwindigkeit", style = MaterialTheme.typography.labelMedium)
-                        Text("%.2f GHz".format(device.cpu.speed), style = MaterialTheme.typography.bodyMedium)
+                        Text("%.2f GHz".format(cpu.speed), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -64,14 +68,15 @@ fun HardwareInformation(device: Device) {
                 }
             }
             if (device.mainboard != null) {
+                val mainboard = device.mainboard!!
                 ElevatedCard(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("Mainboard", style = MaterialTheme.typography.headlineMedium)
                         Text("Hersteller", style = MaterialTheme.typography.labelMedium)
-                        Text(device.mainboard.manufacturer, style = MaterialTheme.typography.bodyMedium)
+                        Text(mainboard.manufacturer, style = MaterialTheme.typography.bodyMedium)
 
                         Text("Modell", style = MaterialTheme.typography.labelMedium)
-                        Text(device.mainboard.model, style = MaterialTheme.typography.bodyMedium)
+                        Text(mainboard.model, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }

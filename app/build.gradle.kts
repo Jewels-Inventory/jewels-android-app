@@ -4,12 +4,12 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-val jewelsMajorVersion: Int by project
-val jewelsMinorVersion: Int by project
+val jewelsMajorVersion: String by project
+val jewelsMinorVersion: String by project
 
 fun computeVersionCode(): Int {
     val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "-1"
-    val versionCode = (jewelsMajorVersion * 100000) + (jewelsMinorVersion * 10000) + jewelsReleaseVersion.toInt()
+    val versionCode = (jewelsMajorVersion.toInt() * 100000) + (jewelsMinorVersion.toInt() * 10000) + jewelsReleaseVersion.toInt()
 
     print("Versionname is ${jewelsMajorVersion}.${jewelsMinorVersion}.${jewelsReleaseVersion}")
     print("Versioncode is $versionCode")
@@ -23,12 +23,11 @@ android {
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
-        minSdk = 28
+        minSdk = 26
         targetSdk = 34
-        versionCode = 1
+        versionCode = computeVersionCode()
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -76,6 +75,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":detection"))
+
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
     implementation("androidx.activity:activity-compose:1.9.0")
@@ -97,6 +98,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
@@ -110,6 +113,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose-navigation")
     implementation("io.insert-koin:koin-androidx-navigation")
     implementation("io.insert-koin:koin-androidx-workmanager")
+    implementation("com.google.android.gms:play-services-wearable:18.1.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
