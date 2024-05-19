@@ -7,8 +7,9 @@ val jewelsMajorVersion: String by project
 val jewelsMinorVersion: String by project
 
 fun computeVersionCode(): Int {
-    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "-1"
-    val versionCode = (jewelsMajorVersion.toInt() * 100000) + (jewelsMinorVersion.toInt() * 10000) + jewelsReleaseVersion.toInt()
+    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "3"
+    val versionCode =
+        (jewelsMajorVersion.toInt() * 100000) + (jewelsMinorVersion.toInt() * 10000) + jewelsReleaseVersion.toInt()
 
     print("Versionname is ${jewelsMajorVersion}.${jewelsMinorVersion}.${jewelsReleaseVersion}")
     print("Versioncode is $versionCode")
@@ -26,16 +27,35 @@ android {
         targetSdk = 34
         versionCode = computeVersionCode()
         versionName = "1.0"
+
         vectorDrawables {
             useSupportLibrary = true
         }
+    }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("ANDROID_KEY_STOREFILE") ?: "/opt/secure/signing-key.jks")
+            storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: "key0"
+            keyPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+        }
     }
 
     buildTypes {
-        release {
+        getByName("debug") {
+            isDebuggable = true
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        getByName("release") {
+            isDebuggable = false
+            isMinifyEnabled = true
+            isCrunchPngs = true
+            isShrinkResources = true
+            isProfileable = false
+            isJniDebuggable = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -90,6 +110,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation(platform("io.insert-koin:koin-bom:3.5.0"))
     implementation("io.insert-koin:koin-core")

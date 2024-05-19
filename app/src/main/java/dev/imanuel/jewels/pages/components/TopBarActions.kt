@@ -44,7 +44,6 @@ fun TopBarActions(
             }
         },
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary
         )
     ) {

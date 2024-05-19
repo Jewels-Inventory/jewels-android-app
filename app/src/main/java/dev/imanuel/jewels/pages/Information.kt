@@ -48,10 +48,6 @@ fun AppBar(
             }
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
         actions = {
             TopBarActions(goToSetup = goToSetup)
         })
@@ -63,8 +59,6 @@ fun Tabs(state: PagerState, device: Device?) {
 
     TabRow(
         selectedTabIndex = state.currentPage,
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.primary,
     ) {
         Tab(
             icon = {
@@ -120,6 +114,7 @@ fun Information(
     device: Device,
     navController: NavController,
     hasWatch: Boolean,
+    isTablet: Boolean,
     goToSetup: () -> Unit
 ) {
     val tabState = rememberPagerState(initialPage = SelectedTab.Hardware.ordinal) {
@@ -136,7 +131,9 @@ fun Information(
             }
         },
         bottomBar = {
-            BottomNavBar(hasWatch, navController)
+            if (!isTablet) {
+                BottomNavBar(hasWatch, navController)
+            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton({

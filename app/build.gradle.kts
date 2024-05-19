@@ -8,8 +8,16 @@ val jewelsMajorVersion: String by project
 val jewelsMinorVersion: String by project
 
 fun computeVersionCode(): Int {
-    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "-1"
-    val versionCode = (jewelsMajorVersion.toInt() * 100000) + (jewelsMinorVersion.toInt() * 10000) + jewelsReleaseVersion.toInt()
+    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "3"
+    val versionCode =
+        buildString {
+            append("10")
+            append(
+                ((jewelsMajorVersion.toInt() * 100000) + (jewelsMinorVersion.toInt() * 10000) + jewelsReleaseVersion.toInt()).toString(
+                    10
+                )
+            )
+        }.toInt()
 
     print("Versionname is ${jewelsMajorVersion}.${jewelsMinorVersion}.${jewelsReleaseVersion}")
     print("Versioncode is $versionCode")
@@ -35,7 +43,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(System.getenv("ANDROID_KEY_STOREFILE") ?: "/opt/secure/signing-key.jks")
+            storeFile = file(System.getenv("ANDROID_KEY_STOREFILE") ?: "/opt/secure/signing-key-jewels.jks")
             storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
             keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: "key0"
             keyPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
@@ -50,7 +58,11 @@ android {
         }
         getByName("release") {
             isDebuggable = false
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isCrunchPngs = true
+            isShrinkResources = true
+            isProfileable = false
+            isJniDebuggable = false
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -114,6 +126,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-navigation")
     implementation("io.insert-koin:koin-androidx-workmanager")
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
+    implementation("androidx.compose.material3:material3-window-size-class-android:1.2.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

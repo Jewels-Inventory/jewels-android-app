@@ -15,14 +15,12 @@ import dev.imanuel.jewels.pages.getHandheldType
 
 @Composable
 fun BottomNavBar(hasWatch: Boolean, navController: NavController) {
-    var page by remember { mutableStateOf(NavigationPage.Jewels) }
     val handheldType = getHandheldType()
 
     NavigationBar {
         NavigationBarItem(
             onClick = {
                 navController.navigate("jewels")
-                page = NavigationPage.Jewels
             },
             selected = navController.currentDestination?.route == "jewels",
             label = { Text("Jewels") },
@@ -32,7 +30,6 @@ fun BottomNavBar(hasWatch: Boolean, navController: NavController) {
         NavigationBarItem(
             onClick = {
                 navController.navigate("handheld")
-                page = NavigationPage.Handheld
             },
             selected = navController.currentDestination?.route == "handheld",
             label = { Text(handheldType.toString()) },
@@ -51,7 +48,6 @@ fun BottomNavBar(hasWatch: Boolean, navController: NavController) {
             NavigationBarItem(
                 onClick = {
                     navController.navigate("watch")
-                    page = NavigationPage.Watch
                 },
                 selected = navController.currentDestination?.route == "watch",
                 label = { Text("Smartwatch") },

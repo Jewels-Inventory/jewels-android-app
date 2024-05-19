@@ -8,6 +8,7 @@
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:name="dev.imanuel.jewels.JewelsApplication"
@@ -42,7 +43,7 @@
                 android:name="dev.imanuel.jewels.MainActivity"
                 android:exported="true"
                 android:taskAffinity=""
-                android:theme="@style/Theme.Jewels">
+                android:theme="@style/Theme.Jewels.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

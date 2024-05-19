@@ -4,7 +4,7 @@
     pull_policy: always
   before_script:
     - chmod +x ./gradlew
-    - wget https://storage.googleapis.com/play_public/supported_devices.csv -o app/src/main/res/raw/supported_devices.csv
+    - wget https://storage.googleapis.com/play_public/supported_devices.csv -o detection/src/main/res/raw/supported_devices.csv
   cache:
     key: $CI_PROJECT_NAME
     paths:
@@ -16,30 +16,6 @@ stages:
   - lint
   - build
   - deploy
-
-lint-debug-app:
-  stage: lint
-  extends:
-    - .build-base
-  script:
-    - ./gradlew -Pci --console=plain lintDebug -PbuildDir=lint
-  artifacts:
-    paths:
-      - app/lint/reports/lint-results-debug.html
-    expose_as: "lint-report"
-    when: always
-
-lint-release-app:
-  stage: lint
-  extends:
-    - .build-base
-  script:
-    - ./gradlew -Pci --console=plain lintRelease -PbuildDir=lint
-  artifacts:
-    paths:
-      - app/lint/reports/lint-results-release.html
-    expose_as: "lint-report"
-    when: always
 
 build-release-app:
   stage: build

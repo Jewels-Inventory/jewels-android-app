@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package dev.imanuel.jewels.pages
 
@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.android.gms.wearable.Wearable
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.detection.information.Device
@@ -30,6 +28,7 @@ fun Jewels(
     handheld: Device?,
     watch: Device?,
     navController: NavController,
+    isTablet: Boolean,
     goToSetup: () -> Unit
 ) {
     val handheldType = getHandheldType()
@@ -42,16 +41,14 @@ fun Jewels(
                     Text("Jewels")
                 },
                 scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
                 actions = {
                     TopBarActions(goToSetup = goToSetup)
                 })
         },
         bottomBar = {
-            BottomNavBar(watch != null, navController)
+            if (!isTablet) {
+                BottomNavBar(watch != null, navController)
+            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton({

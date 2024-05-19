@@ -1,6 +1,7 @@
 package dev.imanuel.jewels.pages
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
@@ -24,8 +25,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import dev.imanuel.jewels.utils.BarcodeAnalyser
 import dev.imanuel.jewels.detection.saveSettings
+import dev.imanuel.jewels.utils.BarcodeAnalyser
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import java.util.concurrent.Executors
@@ -34,9 +35,15 @@ import kotlin.coroutines.suspendCoroutine
 
 suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
     ProcessCameraProvider.getInstance(this).also { future ->
-        future.addListener({
-            continuation.resume(future.get())
-        }, mainExecutor)
+        future.addListener(
+            {
+                continuation.resume(future.get())
+            }, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mainExecutor
+            } else {
+                Executors.newSingleThreadExecutor()
+            }
+        )
     }
 }
 

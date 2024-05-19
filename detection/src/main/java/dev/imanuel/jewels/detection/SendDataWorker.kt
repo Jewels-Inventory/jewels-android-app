@@ -6,10 +6,12 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import dev.imanuel.jewels.detection.information.ApiService
+import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
 import dev.imanuel.jewels.detection.information.InformationCollector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 
 class SendDataWorker(
     private val client: ApiService?,
@@ -22,6 +24,12 @@ class SendDataWorker(
         withContext(Dispatchers.IO) {
             val device = informationCollector.collect(DeviceType.Handheld)
 
+            sendHandheldData(device)
+        }
+    }
+
+    private suspend fun sendHandheldData(device: Device) {
+        withContext(Dispatchers.IO) {
             try {
                 client?.sendPhoneData("Bearer ${settings?.token}", device)
             } catch (e: dev.imanuel.jewels.detection.information.PushException) {
@@ -42,6 +50,12 @@ class SendDataWorker(
         withContext(Dispatchers.IO) {
             val device = informationCollector.collect(DeviceType.Watch)
 
+            sendWatchData(device)
+        }
+    }
+
+    private suspend fun sendWatchData(device: Device) {
+        withContext(Dispatchers.IO) {
             try {
                 client?.sendWatchData("Bearer ${settings?.token}", device)
             } catch (e: dev.imanuel.jewels.detection.information.PushException) {
@@ -60,11 +74,19 @@ class SendDataWorker(
 
     override suspend fun doWork(): Result {
         try {
-            this.inputData.getInt("type", DeviceType.Handheld.ordinal).let { type ->
+            this.inputData.getInt("type", -1).let { type ->
                 if (type == DeviceType.Handheld.ordinal) {
                     sendHandheldData()
                 } else if (type == DeviceType.Watch.ordinal) {
                     sendWatchData()
+                }
+            }
+            this.inputData.getString("data")?.let {
+                val device = Json.decodeFromString(Device.serializer(), it)
+                if (device.type == DeviceType.Handheld) {
+                    sendHandheldData(device)
+                } else if (device.type == DeviceType.Watch) {
+                    sendWatchData(device)
                 }
             }
 

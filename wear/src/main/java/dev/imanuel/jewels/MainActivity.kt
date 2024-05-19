@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.work.Data
@@ -35,6 +36,8 @@ import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
 
         setTheme(android.R.style.Theme_DeviceDefault)
@@ -119,7 +122,7 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
                             .build()
                     ).build()
                     WorkManager.getInstance(context).enqueue(request)
-                    Toast.makeText(context, "Daten werden hochgeladen", Toast.LENGTH_LONG)
+                    Toast.makeText(context, "Daten werden hochgeladen", Toast.LENGTH_LONG).show()
                 }) {
                     Text("Daten hochladen")
                 }
