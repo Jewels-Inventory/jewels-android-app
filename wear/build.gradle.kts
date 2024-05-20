@@ -112,7 +112,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
-    implementation(platform("io.insert-koin:koin-bom:3.5.0"))
+    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
     implementation("io.insert-koin:koin-core")
     implementation("io.insert-koin:koin-core-coroutines")
     implementation("io.insert-koin:koin-compose")
