@@ -8,7 +8,7 @@ val jewelsMajorVersion: String by project
 val jewelsMinorVersion: String by project
 
 fun computeVersionCode(): Int {
-    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "3"
+    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "5"
     val versionCode =
         buildString {
             append("10")

@@ -15,10 +15,10 @@ data class Drive(val name: String, val driver: String, val manufacturer: String,
 data class Cpu(val manufacturer: String, val model: String, val speed: Float?, val cores: Int, val threads: Int)
 
 @Serializable
-data class Mainboard(val manufacturer: String, val version: String, val model: String, val serial: String)
+data class Mainboard(val manufacturer: String, val version: String, val model: String)
 
 @Serializable
-data class Kernel(val release: String, val version: String, val architecture: String)
+data class Kernel(val version: String, val architecture: String)
 
 @Serializable
 data class OperatingSystem(val version: String?, val name: String)

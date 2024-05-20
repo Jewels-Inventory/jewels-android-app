@@ -130,7 +130,6 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
             manufacturer = Build.MANUFACTURER.upperFirst(),
             model = Build.BOARD,
             version = UNKNOWN,
-            serial = UNKNOWN
         )
         val cpu = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             Cpu(
@@ -153,7 +152,6 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
             version = Build.VERSION.RELEASE,
         )
         val kernel = Kernel(
-            release = System.getProperty("os.version") ?: "Unbekannt",
             version = System.getProperty("os.version") ?: "Unbekannt",
             architecture = Build.SUPPORTED_ABIS[0]
         )
