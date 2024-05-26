@@ -12,6 +12,17 @@
   tags:
     - runner-amd64
 
+.deploy-base:
+  stage: deploy
+  extends:
+    - .build-base
+  before_script:
+    - bundle update
+  script:
+    - mkdir -p /opt/secure
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+    - bundle exec fastlane android ${TRACK}
+
 stages:
   - lint
   - build
@@ -28,16 +39,21 @@ build-release-app:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == "main"
 
-deploy-internal-test-app:
-  stage: deploy
+deploy-android-app:
   extends:
-    - .build-base
-  before_script:
-    - bundle update
-  script:
-    - mkdir -p /opt/secure
-    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
-    - bundle exec fastlane android android
+    - .deploy-base
+  variables:
+    TRACK: android
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+      when: never
+
+deploy-wear-app:
+  extends:
+    - .deploy-base
+  variables:
+    TRACK: wear
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
