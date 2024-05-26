@@ -12,6 +12,6 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :wear do
     gradle(task: ":wear:clean :wear:bundle", build_type: "release")
-    upload_to_play_store(track: "wear-app", aab: "./wear/build/outputs/bundle/release/wear-release.aab")
+    upload_to_play_store(track: "wear", aab: "./wear/build/outputs/bundle/release/wear-release.aab")
   end
 end
