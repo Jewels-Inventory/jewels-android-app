@@ -126,7 +126,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose-navigation")
     implementation("io.insert-koin:koin-androidx-navigation")
     implementation("io.insert-koin:koin-androidx-workmanager")
-    implementation("com.google.android.gms:play-services-wearable:18.1.0")
+    implementation("com.google.android.gms:play-services-wearable:18.2.0")
     implementation("androidx.compose.material3:material3-window-size-class-android:1.2.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
