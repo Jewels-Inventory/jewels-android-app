@@ -4,18 +4,6 @@
     <value>
       <entry key="app">
         <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="SERIAL_NUMBER" />
-                  <value value="192.168.178.96:5555" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-05-19T15:07:50.428963296Z" />
           <runningDeviceTargetsSelectedWithDialog>
             <Target>
               <type value="RUNNING_DEVICE_TARGET" />
@@ -48,9 +36,7 @@
         </State>
       </entry>
       <entry key="wear">
-        <State>
-          <multipleDevicesSelectedInDropDown value="true" />
-        </State>
+        <State />
       </entry>
     </value>
   </component>
