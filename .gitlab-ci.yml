@@ -13,7 +13,6 @@
     - runner-amd64
 
 .deploy-base:
-  stage: deploy
   extends:
     - .build-base
   before_script:
@@ -26,7 +25,8 @@
 stages:
   - lint
   - build
-  - deploy
+  - deploy-android
+  - deploy-wear
 
 build-release-app:
   stage: build
@@ -44,6 +44,7 @@ deploy-android-app:
     - .deploy-base
   variables:
     TRACK: android
+  stage: deploy-android
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
@@ -54,6 +55,7 @@ deploy-wear-app:
     - .deploy-base
   variables:
     TRACK: wear
+  stage: deploy-wear
   dependencies:
     - deploy-android-app
   rules:
