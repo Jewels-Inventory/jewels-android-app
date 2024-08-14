@@ -1,0 +1,13 @@
+-dontwarn dev.imanuel.jewels.detection.KoinKt
+-dontwarn dev.imanuel.jewels.detection.ServerSettings$Companion
+-dontwarn dev.imanuel.jewels.detection.ServerSettings
+-dontwarn dev.imanuel.jewels.detection.ServerSettingsKt
+-dontwarn dev.imanuel.jewels.detection.information.Device$Companion
+-dontwarn dev.imanuel.jewels.detection.information.Device
+-dontwarn dev.imanuel.jewels.detection.information.DeviceType
+-dontwarn dev.imanuel.jewels.detection.information.InformationCollector
+-dontwarn dev.imanuel.jewels.detection.information.Cpu
+-dontwarn dev.imanuel.jewels.detection.information.Drive
+-dontwarn dev.imanuel.jewels.detection.information.Kernel
+-dontwarn dev.imanuel.jewels.detection.information.Mainboard
+-dontwarn dev.imanuel.jewels.detection.information.OperatingSystem
