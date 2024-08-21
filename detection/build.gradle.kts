@@ -44,7 +44,7 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
-    implementation("androidx.compose.material3.adaptive:adaptive-android:1.0.0-beta04")
+    implementation("androidx.compose.material3.adaptive:adaptive-android:1.1.0-alpha01")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
