@@ -31,6 +31,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.activity:activity-compose:1.9.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+
     implementation(platform("androidx.compose:compose-bom:2024.09.02"))
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.ui:ui")
@@ -42,7 +43,7 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-view:1.3.4")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
-    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.36.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("androidx.compose.material3.adaptive:adaptive-android:1.1.0-alpha03")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
@@ -53,7 +54,7 @@ dependencies {
     implementation("androidx.work:work-runtime:2.9.1")
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 
-    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
+    implementation(platform("io.insert-koin:koin-bom:4.0.0"))
     implementation("io.insert-koin:koin-core")
     implementation("io.insert-koin:koin-core-coroutines")
     implementation("io.insert-koin:koin-compose")
@@ -62,7 +63,4 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose-navigation")
     implementation("io.insert-koin:koin-androidx-navigation")
     implementation("io.insert-koin:koin-androidx-workmanager")
-}
-repositories {
-    mavenCentral()
 }

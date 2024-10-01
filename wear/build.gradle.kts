@@ -105,7 +105,7 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-view:1.3.4")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
-    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.36.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("androidx.compose.material3.adaptive:adaptive-android:1.1.0-alpha03")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
@@ -113,13 +113,13 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.work:work-runtime:2.9.1")
     implementation("androidx.work:work-runtime-ktx:2.9.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
-    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
+    implementation(platform("io.insert-koin:koin-bom:4.0.0"))
     implementation("io.insert-koin:koin-core")
     implementation("io.insert-koin:koin-core-coroutines")
     implementation("io.insert-koin:koin-compose")
@@ -132,7 +132,4 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.wear:wear-tooling-preview:1.0.0")
-}
-repositories {
-    mavenCentral()
 }
