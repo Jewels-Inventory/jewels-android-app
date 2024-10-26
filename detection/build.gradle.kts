@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.backend.common.push
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -6,7 +8,7 @@ plugins {
 
 android {
     namespace = "dev.imanuel.jewels.detection"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
@@ -14,7 +16,7 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             isJniDebuggable = false
         }
     }

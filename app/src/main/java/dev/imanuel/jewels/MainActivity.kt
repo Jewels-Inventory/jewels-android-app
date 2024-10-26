@@ -6,7 +6,9 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -21,7 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,11 +47,16 @@ import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
 import dev.imanuel.jewels.detection.information.InformationCollector
 import dev.imanuel.jewels.detection.loadSettings
-import dev.imanuel.jewels.pages.*
+import dev.imanuel.jewels.pages.Information
+import dev.imanuel.jewels.pages.Jewels
+import dev.imanuel.jewels.pages.Login
+import dev.imanuel.jewels.pages.ServerSetup
+import dev.imanuel.jewels.pages.getHandheldType
 import dev.imanuel.jewels.ui.theme.JewelsTheme
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.json.Json
+import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.compose.koinInject
 
 enum class NavigationPage {
@@ -59,10 +72,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+
         val settings = loadSettings(this)
         if (settings != null) {
             val request = PutDataRequest.create("/settings").setUrgent().apply {
-                data = Json.encodeToString<ServerSettings>(ServerSettings.serializer(), settings).toByteArray()
+                data = Json.encodeToString(ServerSettings.serializer(), settings).toByteArray()
             }
             dataClient.putDataItem(request)
         }
@@ -70,20 +85,28 @@ class MainActivity : ComponentActivity() {
         setContent {
             val windowSizeClass = calculateWindowSizeClass(this)
             val isTablet = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
-
-            MainComposable(isTablet = isTablet)
+            KoinAndroidContext {
+                MainComposable(isTablet = isTablet)
+            }
         }
     }
 }
 
 @Composable
-fun NavRail(navController: NavController, hasWatch: Boolean, isTablet: Boolean, content: @Composable () -> Unit) {
+fun NavRail(
+    navController: NavController,
+    hasWatch: Boolean,
+    isTablet: Boolean,
+    content: @Composable () -> Unit
+) {
     Row(modifier = Modifier.fillMaxSize()) {
         if (isTablet) {
             val handheldType = getHandheldType()
 
             NavigationRail(
-                modifier = Modifier.fillMaxHeight().align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .align(Alignment.CenterVertically),
             ) {
                 Spacer(Modifier.weight(1f))
                 NavigationRailItem(
@@ -103,7 +126,8 @@ fun NavRail(navController: NavController, hasWatch: Boolean, isTablet: Boolean, 
                     label = { Text(handheldType.toString()) },
                     icon = {
                         Icon(
-                            ImageVector.vectorResource(R.drawable.ic_tablet), getHandheldType().toString()
+                            ImageVector.vectorResource(R.drawable.ic_tablet),
+                            getHandheldType().toString()
                         )
                     })
                 if (hasWatch) {
@@ -159,7 +183,10 @@ fun MainComposable(
                             if (item != null) {
                                 val data = item.data
                                 if (data != null) {
-                                    watch = Json.decodeFromString(Device.serializer(), data.decodeToString())
+                                    watch = Json.decodeFromString(
+                                        Device.serializer(),
+                                        data.decodeToString()
+                                    )
                                 }
                             }
 
@@ -170,7 +197,10 @@ fun MainComposable(
                                         if (event.type == DataEvent.TYPE_CHANGED) {
                                             val data = event.dataItem.data
                                             watch = if (data != null) {
-                                                Json.decodeFromString(Device.serializer(), data.decodeToString())
+                                                Json.decodeFromString(
+                                                    Device.serializer(),
+                                                    data.decodeToString()
+                                                )
                                             } else {
                                                 null
                                             }

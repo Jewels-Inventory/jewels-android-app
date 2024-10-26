@@ -1,7 +1,5 @@
 package dev.imanuel.jewels.detection
 
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCapture
 import dev.imanuel.jewels.detection.information.ApiService
 import dev.imanuel.jewels.detection.information.InformationCollector
 import dev.imanuel.jewels.detection.information.InformationCollectorImpl
