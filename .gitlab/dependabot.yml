@@ -4,3 +4,15 @@ updates:
     directory: /
     schedule:
       interval: daily
+  - package-ecosystem: gradle
+    directory: /app
+    schedule:
+      interval: daily
+  - package-ecosystem: gradle
+    directory: /detection
+    schedule:
+      interval: daily
+  - package-ecosystem: gradle
+    directory: /wear
+    schedule:
+      interval: daily
