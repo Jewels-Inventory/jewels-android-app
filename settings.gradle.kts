@@ -3,6 +3,9 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
+        // Once you start using pluginManagement, you should explicitly add this, unless
+        // you NEVER want to use this repository
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +13,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 

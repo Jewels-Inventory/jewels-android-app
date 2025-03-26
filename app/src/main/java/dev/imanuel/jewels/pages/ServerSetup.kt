@@ -140,10 +140,3 @@ fun ServerSetup(
         }
     }
 }
-
-@androidx.compose.ui.tooling.preview.Preview
-@androidx.camera.core.ExperimentalGetImage
-@Composable
-fun ServerSetupreview() {
-    ServerSetup { }
-}

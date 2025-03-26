@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("plugin.compose")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 val jewelsMajorVersion: String by project
@@ -20,12 +20,12 @@ fun computeVersionCode(): Int {
 
 android {
     namespace = "dev.imanuel.jewels"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
-        minSdk = 26
-        targetSdk = 35
+        minSdk = 31
+        targetSdk = 36
         versionCode = computeVersionCode()
         versionName = "1.0"
 
@@ -36,7 +36,8 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(System.getenv("ANDROID_KEY_STOREFILE") ?: "/opt/secure/signing-key-jewels.jks")
+            storeFile =
+                file(System.getenv("ANDROID_KEY_STOREFILE") ?: "/opt/secure/signing-key-jewels.jks")
             storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
             keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: "key0"
             keyPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
@@ -87,50 +88,29 @@ android {
 dependencies {
     implementation(project(":detection"))
 
-    implementation("com.google.android.gms:play-services-wearable:19.0.0")
-    implementation("androidx.wear.compose:compose-material:1.4.1")
-    implementation("androidx.wear.compose:compose-foundation:1.4.1")
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.activity:activity-compose:1.10.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation(libs.play.services.wearable)
+    implementation(libs.androidx.wear.compose.material)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(platform("androidx.compose:compose-bom:2025.03.00"))
-    implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.compose.ui.ui.graphics)
+    implementation(libs.androidx.compose.material3.material3)
 
-    implementation("androidx.navigation:navigation-compose:2.8.9")
-    implementation("androidx.camera:camera-camera2:1.4.1")
-    implementation("androidx.camera:camera-lifecycle:1.4.1")
-    implementation("androidx.camera:camera-view:1.4.1")
-    implementation("com.google.mlkit:barcode-scanning:17.3.0")
-    implementation("com.google.accompanist:accompanist-permissions:0.37.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
-    implementation("androidx.compose.material3.adaptive:adaptive-android:1.1.0")
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
-    implementation("androidx.work:work-runtime:2.10.0")
-    implementation("androidx.work:work-runtime-ktx:2.10.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation(libs.org.jetbrains.kotlinx.kotlinx.serialization.json)
+    implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.android)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.core.splashscreen)
 
-    implementation(platform("io.insert-koin:koin-bom:4.0.2"))
-    implementation("io.insert-koin:koin-core")
-    implementation("io.insert-koin:koin-core-coroutines")
-    implementation("io.insert-koin:koin-compose")
-    implementation("io.insert-koin:koin-android")
-    implementation("io.insert-koin:koin-androidx-compose")
-    implementation("io.insert-koin:koin-androidx-compose-navigation")
-    implementation("io.insert-koin:koin-androidx-navigation")
-    implementation("io.insert-koin:koin-androidx-workmanager")
+    implementation(platform(libs.io.insert.koin.koin.bom))
+    implementation(libs.io.insert.koin.koin.core)
+    implementation(libs.io.insert.koin.koin.compose)
+    implementation(libs.io.insert.koin.koin.android)
+    implementation(libs.io.insert.koin.koin.androidx.workmanager)
 
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-    debugImplementation("androidx.wear:wear-tooling-preview:1.0.0")
+    implementation(libs.oneui6.material3.dynamic.color.compose)
 }
