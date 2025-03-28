@@ -18,8 +18,12 @@ import dev.imanuel.jewels.detection.information.DeviceType
 @Composable
 fun HardwareInformation(device: Device) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, fill = false)) {
-            ElevatedCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp)) {
+        Column(modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .weight(1f, fill = false)) {
+            ElevatedCard(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         if (device.type == DeviceType.Handheld) {
@@ -43,7 +47,9 @@ fun HardwareInformation(device: Device) {
             }
             if (device.cpu != null) {
                 val cpu = device.cpu!!
-                ElevatedCard(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+                ElevatedCard(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("Prozessor", style = MaterialTheme.typography.headlineMedium)
                         Text("Hersteller", style = MaterialTheme.typography.labelMedium)
@@ -56,11 +62,16 @@ fun HardwareInformation(device: Device) {
                         Text(cpu.cores.toString(), style = MaterialTheme.typography.bodyMedium)
 
                         Text("Geschwindigkeit", style = MaterialTheme.typography.labelMedium)
-                        Text("%.2f GHz".format(cpu.speed), style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "%.2f GHz".format(cpu.speed),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
             }
-            ElevatedCard(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+            ElevatedCard(modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Arbeitsspeicher", style = MaterialTheme.typography.headlineMedium)
                     Text("Größe", style = MaterialTheme.typography.labelMedium)
@@ -69,7 +80,9 @@ fun HardwareInformation(device: Device) {
             }
             if (device.mainboard != null) {
                 val mainboard = device.mainboard!!
-                ElevatedCard(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+                ElevatedCard(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("Mainboard", style = MaterialTheme.typography.headlineMedium)
                         Text("Hersteller", style = MaterialTheme.typography.labelMedium)

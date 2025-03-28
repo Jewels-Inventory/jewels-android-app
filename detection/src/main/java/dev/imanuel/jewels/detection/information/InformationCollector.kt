@@ -10,7 +10,7 @@ import dev.imanuel.jewels.detection.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.RandomAccessFile
-import java.util.*
+import java.util.UUID
 
 private data class RetailDeviceDetails(
     val manufacturer: String,
@@ -32,7 +32,8 @@ private fun String.upperFirst(): String {
 
 class InformationCollectorImpl(private val context: Context) : InformationCollector {
     private fun getRetailDeviceDetails(): RetailDeviceDetails {
-        val devices = context.resources.openRawResource(R.raw.supported_devices).bufferedReader(Charsets.UTF_16)
+        val devices = context.resources.openRawResource(R.raw.supported_devices)
+            .bufferedReader(Charsets.UTF_16)
         val matchingDevice = devices.lines().filter {
             it.isNotBlank() && it.matches(Regex("^.*,.*,${Build.DEVICE},${Build.MODEL}\$"))
         }.findFirst()
@@ -53,7 +54,8 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
 
     private fun getId(): String {
         val pref = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
-        val id = pref.getString("app_id", UUID.randomUUID().toString()) ?: UUID.randomUUID().toString()
+        val id =
+            pref.getString("app_id", UUID.randomUUID().toString()) ?: UUID.randomUUID().toString()
         pref.edit().putString("app_id", id).apply()
 
         return id
@@ -62,7 +64,8 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
     override suspend fun collect(type: DeviceType): Device {
         val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val storageStatsManager = context.getSystemService(Context.STORAGE_STATS_SERVICE) as StorageStatsManager
+        val storageStatsManager =
+            context.getSystemService(Context.STORAGE_STATS_SERVICE) as StorageStatsManager
 
         val maxPath = "${CPU_INFO_DIR}cpu0/cpufreq/cpuinfo_max_freq"
         val cpuSpeed = try {

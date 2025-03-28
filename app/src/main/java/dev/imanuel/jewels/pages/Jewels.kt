@@ -7,7 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,9 +59,10 @@ fun Jewels(
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton({
-                Text("Alle Infos hochladen")
-            },
+            ExtendedFloatingActionButton(
+                {
+                    Text("Alle Infos hochladen")
+                },
                 { Icon(ImageVector.vectorResource(R.drawable.ic_upload), "Infos hochladen") },
                 {
                     if (watch != null) {
@@ -66,7 +75,9 @@ fun Jewels(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()) {
             Text("Verbunden", style = MaterialTheme.typography.displayMedium)
             Text(
                 "Du bist mit ${serverSettings.host.replace("https://", "")} verbunden",

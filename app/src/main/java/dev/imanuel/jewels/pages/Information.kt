@@ -11,7 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -63,7 +72,8 @@ fun Tabs(state: PagerState, device: Device?) {
         Tab(
             icon = {
                 Icon(
-                    ImageVector.vectorResource(R.drawable.ic_hardware), contentDescription = "Hardware"
+                    ImageVector.vectorResource(R.drawable.ic_hardware),
+                    contentDescription = "Hardware"
                 )
             },
             text = { Text("Hardware", maxLines = 1, overflow = TextOverflow.Ellipsis) },
@@ -78,7 +88,8 @@ fun Tabs(state: PagerState, device: Device?) {
         Tab(
             icon = {
                 Icon(
-                    ImageVector.vectorResource(R.drawable.ic_storage), contentDescription = "Speicher"
+                    ImageVector.vectorResource(R.drawable.ic_storage),
+                    contentDescription = "Speicher"
                 )
             },
             text = { Text("Speicher", maxLines = 1, overflow = TextOverflow.Ellipsis) },
@@ -93,7 +104,8 @@ fun Tabs(state: PagerState, device: Device?) {
         Tab(
             icon = {
                 Icon(
-                    ImageVector.vectorResource(R.drawable.ic_software), contentDescription = "Software"
+                    ImageVector.vectorResource(R.drawable.ic_software),
+                    contentDescription = "Software"
                 )
             },
             text = { Text("Software", maxLines = 1, overflow = TextOverflow.Ellipsis) },
@@ -136,15 +148,18 @@ fun Information(
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton({
-                Text("Infos hochladen")
-            },
+            ExtendedFloatingActionButton(
+                {
+                    Text("Infos hochladen")
+                },
                 { Icon(ImageVector.vectorResource(R.drawable.ic_upload), "Infos hochladen") },
                 { UploadData(handheldType, device, context) })
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
-        HorizontalPager(state = tabState, modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+        HorizontalPager(state = tabState, modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()) {
             when (SelectedTab.entries[it]) {
                 SelectedTab.Hardware -> Column(modifier = Modifier.fillMaxSize()) {
                     HardwareInformation(device)

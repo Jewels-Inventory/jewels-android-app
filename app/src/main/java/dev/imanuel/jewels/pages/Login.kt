@@ -1,8 +1,20 @@
 package dev.imanuel.jewels.pages
 
 import android.content.Context
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -71,7 +83,8 @@ fun Login(
                     }
                     Button(onClick = {
                         val request = PutDataRequest.create("/settings").setUrgent().apply {
-                            data = Json.encodeToString(ServerSettings.serializer(), serverSettings).toByteArray()
+                            data = Json.encodeToString(ServerSettings.serializer(), serverSettings)
+                                .toByteArray()
                         }
                         dataClient.putDataItem(request)
                         goToJewels()

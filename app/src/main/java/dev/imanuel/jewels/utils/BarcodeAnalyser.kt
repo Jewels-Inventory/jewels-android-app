@@ -44,7 +44,13 @@ class BarcodeAnalyser(
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
             scanner.process(image)
                 .addOnSuccessListener { checkBarCodes(it) }
-                .addOnFailureListener { Log.w(TAG, "analyze: Failed to process image ${it.message}", it) }
+                .addOnFailureListener {
+                    Log.w(
+                        TAG,
+                        "analyze: Failed to process image ${it.message}",
+                        it
+                    )
+                }
         }
         imageProxy.close()
     }

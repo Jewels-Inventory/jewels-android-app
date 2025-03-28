@@ -4,11 +4,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
-import dev.imanuel.jewels.NavigationPage
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.pages.HandheldType
 import dev.imanuel.jewels.pages.getHandheldType

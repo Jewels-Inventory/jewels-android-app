@@ -34,7 +34,11 @@ class SendDataWorker(
                 client?.sendPhoneData("Bearer ${settings?.token}", device)
             } catch (e: dev.imanuel.jewels.detection.information.PushException) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(applicationContext, "Die Daten konnten nicht gespeichert werden", Toast.LENGTH_LONG)
+                    Toast.makeText(
+                        applicationContext,
+                        "Die Daten konnten nicht gespeichert werden",
+                        Toast.LENGTH_LONG
+                    )
                         .show()
                 }
             } catch (e: Exception) {
@@ -60,7 +64,11 @@ class SendDataWorker(
                 client?.sendWatchData("Bearer ${settings?.token}", device)
             } catch (e: dev.imanuel.jewels.detection.information.PushException) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(applicationContext, "Die Daten konnten nicht gespeichert werden", Toast.LENGTH_LONG)
+                    Toast.makeText(
+                        applicationContext,
+                        "Die Daten konnten nicht gespeichert werden",
+                        Toast.LENGTH_LONG
+                    )
                         .show()
                 }
             } catch (e: Exception) {

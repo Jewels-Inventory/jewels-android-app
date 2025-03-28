@@ -11,10 +11,22 @@ enum class DeviceType {
 }
 
 @Serializable
-data class Drive(val name: String, val driver: String, val manufacturer: String, val model: String, val size: Float)
+data class Drive(
+    val name: String,
+    val driver: String,
+    val manufacturer: String,
+    val model: String,
+    val size: Float
+)
 
 @Serializable
-data class Cpu(val manufacturer: String, val model: String, val speed: Float?, val cores: Int, val threads: Int)
+data class Cpu(
+    val manufacturer: String,
+    val model: String,
+    val speed: Float?,
+    val cores: Int,
+    val threads: Int
+)
 
 @OptIn(ExperimentalSerializationApi::class)
 @JsonIgnoreUnknownKeys

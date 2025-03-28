@@ -9,7 +9,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -75,7 +81,10 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
                     if (item != null) {
                         val data = item.data
                         if (data != null) {
-                            settings = Json.decodeFromString(ServerSettings.serializer(), data.decodeToString())
+                            settings = Json.decodeFromString(
+                                ServerSettings.serializer(),
+                                data.decodeToString()
+                            )
                         }
                     }
 
@@ -118,7 +127,10 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
             } else if (deviceInformation != null) {
                 Button(onClick = {
                     val request = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
-                        Data.Builder().putString("data", Json.encodeToString(Device.serializer(), deviceInformation!!))
+                        Data.Builder().putString(
+                            "data",
+                            Json.encodeToString(Device.serializer(), deviceInformation!!)
+                        )
                             .build()
                     ).build()
                     WorkManager.getInstance(context).enqueue(request)

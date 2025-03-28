@@ -1,18 +1,17 @@
 package dev.imanuel.jewels.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import org.nguyenvanlong.oneui.composedynamiccolor.dynamicDarkColorSchemeFix
 import org.nguyenvanlong.oneui.composedynamiccolor.dynamicLightColorSchemeFix
-import androidx.core.view.WindowCompat
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -99,7 +98,9 @@ fun JewelsTheme(
     val colorScheme = when {
         dynamicColor -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorSchemeFix(context) else dynamicLightColorSchemeFix(context)
+            if (darkTheme) dynamicDarkColorSchemeFix(context) else dynamicLightColorSchemeFix(
+                context
+            )
         }
 
         darkTheme -> darkScheme
