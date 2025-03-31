@@ -20,12 +20,12 @@ fun computeVersionCode(): Int {
 
 android {
     namespace = "dev.imanuel.jewels"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 34
         versionCode = computeVersionCode()
         versionName = "1.0"
 
