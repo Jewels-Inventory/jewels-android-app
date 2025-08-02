@@ -22,7 +22,6 @@ retrofit2KotlinxSerializationConverter = "1.0.0"
 serialization = "2.2.0"
 serializationJson = "1.9.0"
 coroutines = "1.10.2"
-oneui6Material3DynamicColorCompose = "0.1.1"
 workRuntime = "2.10.3"
 
 [libraries]
@@ -69,8 +68,6 @@ org-jetbrains-kotlinx-kotlinx-coroutines-core = { module = "org.jetbrains.kotlin
 org-jetbrains-kotlinx-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 
 org-jetbrains-kotlinx-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
-
-oneui6-material3-dynamic-color-compose = { module = "com.github.long5436:oneui6-material3-dynamic-color-compose", version.ref = "oneui6Material3DynamicColorCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

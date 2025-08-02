@@ -131,7 +131,6 @@ dependencies {
     implementation(libs.play.services.wearable)
     implementation(libs.androidx.material3.window.size)
 
-    implementation(libs.oneui6.material3.dynamic.color.compose)
     implementation(libs.barcode.scanning)
     implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.android)
 }
