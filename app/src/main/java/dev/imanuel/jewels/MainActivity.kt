@@ -84,9 +84,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val windowSizeClass = calculateWindowSizeClass(this)
             val isTablet = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
-            KoinAndroidContext {
-                MainComposable(isTablet = isTablet)
-            }
+            MainComposable(isTablet = isTablet)
         }
     }
 }
