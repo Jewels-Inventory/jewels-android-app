@@ -12,8 +12,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import org.nguyenvanlong.oneui.composedynamiccolor.dynamicDarkColorSchemeFix
-import org.nguyenvanlong.oneui.composedynamiccolor.dynamicLightColorSchemeFix
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
