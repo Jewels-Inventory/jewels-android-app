@@ -76,10 +76,12 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_23
         targetCompatibility = JavaVersion.VERSION_23
     }
+
     kotlin {
         target {
             compilerOptions {
@@ -87,12 +89,15 @@ android {
             }
         }
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "2.2.0"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"

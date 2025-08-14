@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -20,12 +22,18 @@ android {
             isJniDebuggable = false
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_23
+        targetCompatibility = JavaVersion.VERSION_23
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+
+    kotlin {
+        target {
+            compilerOptions {
+                jvmTarget = JvmTarget.JVM_23
+            }
+        }
     }
 }
 
