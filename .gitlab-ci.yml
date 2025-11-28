@@ -12,6 +12,8 @@ workflow:
   before_script:
     - chmod +x ./gradlew
     - wget https://storage.googleapis.com/play_public/supported_devices.csv -o detection/src/main/res/raw/supported_devices.csv
+    - mkdir -p /opt/secure
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
   cache:
     key: $CI_PROJECT_NAME
     paths:
@@ -25,8 +27,6 @@ workflow:
   before_script:
     - bundle update
   script:
-    - mkdir -p /opt/secure
-    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     - bundle exec fastlane android ${TRACK}
 
 stages:
@@ -47,7 +47,6 @@ build-release-app:
   extends:
     - .build-base
   script:
-    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     - ./gradlew -Pci --console=plain bundle -PbuildDir=build
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
