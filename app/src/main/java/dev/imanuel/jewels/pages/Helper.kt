@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -28,7 +27,7 @@ enum class HandheldType {
 
 @Composable
 fun getHandheldType(): HandheldType {
-    return if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT) {
+    return if (currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(600)) {
         HandheldType.Tablet
     } else {
         HandheldType.Smartphone
