@@ -3,27 +3,35 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
 }
 
-val jewelsMajorVersion: String by project
-val jewelsMinorVersion: String by project
+fun computeVersionName(): String {
+    return System.getenv("CI_COMMIT_TAG") ?: "0.0.0"
+}
 
 fun computeVersionCode(): Int {
-    val jewelsReleaseVersion = System.getenv("CI_PIPELINE_IID") ?: "5"
+    val versionSplit = (System.getenv("CI_COMMIT_TAG") ?: "0.0.0").split(".")
+    if (versionSplit.size != 3) {
+        throw IllegalArgumentException("The version tag needs to be in the format major.minor.patch")
+    }
+
+    val major = versionSplit[0]
+    val minor = versionSplit[1]
+    val patch = versionSplit[2]
+
     val versionCode =
         buildString {
             append("10")
             append(
-                ((jewelsMajorVersion.toInt() * 100000) + (jewelsMinorVersion.toInt() * 10000) + jewelsReleaseVersion.toInt()).toString(
+                ((major.toInt() * 100000) + (minor.toInt() * 10000) + patch.toInt()).toString(
                     10
                 )
             )
         }.toInt()
 
-    print("Versionname is ${jewelsMajorVersion}.${jewelsMinorVersion}.${jewelsReleaseVersion}")
+    print("Versionname is ${major}.${minor}.${patch}")
     print("Versioncode is $versionCode")
 
     return versionCode
@@ -80,14 +88,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_23
         targetCompatibility = JavaVersion.VERSION_23
-    }
-
-    kotlin {
-        target {
-            compilerOptions {
-                jvmTarget = JvmTarget.JVM_23
-            }
-        }
     }
 
     buildFeatures {

@@ -60,9 +60,7 @@ deploy-android-app:
     TRACK: android
   stage: deploy-android
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
-      when: never
 
 deploy-wear-app:
   extends:
@@ -73,6 +71,4 @@ deploy-wear-app:
   dependencies:
     - deploy-android-app
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
-      when: never
