@@ -24,9 +24,8 @@ workflow:
 .deploy-base:
   extends:
     - .build-base
-  before_script:
-    - bundle update
   script:
+    - bundle update
     - bundle exec fastlane android ${TRACK}
 
 stages:
