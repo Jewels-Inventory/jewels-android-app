@@ -80,7 +80,7 @@ android {
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "src/main/proguard-rules.pro"
             )
         }
     }
