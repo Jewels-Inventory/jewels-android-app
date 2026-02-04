@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import dev.imanuel.jewels.detection.information.ApiService
+import dev.imanuel.jewels.detection.information.ApiClient
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
 import dev.imanuel.jewels.detection.information.InformationCollector
@@ -14,8 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
 class SendDataWorker(
-    private val client: ApiService?,
-    private val settings: ServerSettings?,
+    private val client: ApiClient,
     private val informationCollector: InformationCollector,
     appContext: Context,
     workerParams: WorkerParameters
@@ -24,29 +23,7 @@ class SendDataWorker(
         withContext(Dispatchers.IO) {
             val device = informationCollector.collect(DeviceType.Handheld)
 
-            sendHandheldData(device)
-        }
-    }
-
-    private suspend fun sendHandheldData(device: Device) {
-        withContext(Dispatchers.IO) {
-            try {
-                client?.sendPhoneData("Bearer ${settings?.token}", device)
-            } catch (e: dev.imanuel.jewels.detection.information.PushException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        applicationContext,
-                        "Die Daten konnten nicht gespeichert werden",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG)
-                        .show()
-                }
-            }
+            sendData(device)
         }
     }
 
@@ -54,14 +31,14 @@ class SendDataWorker(
         withContext(Dispatchers.IO) {
             val device = informationCollector.collect(DeviceType.Watch)
 
-            sendWatchData(device)
+            sendData(device)
         }
     }
 
-    private suspend fun sendWatchData(device: Device) {
+    private suspend fun sendData(device: Device) {
         withContext(Dispatchers.IO) {
             try {
-                client?.sendWatchData("Bearer ${settings?.token}", device)
+                client.sendData(device)
             } catch (e: dev.imanuel.jewels.detection.information.PushException) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
@@ -91,11 +68,7 @@ class SendDataWorker(
             }
             this.inputData.getString("data")?.let {
                 val device = Json.decodeFromString(Device.serializer(), it)
-                if (device.type == DeviceType.Handheld) {
-                    sendHandheldData(device)
-                } else if (device.type == DeviceType.Watch) {
-                    sendWatchData(device)
-                }
+                sendData(device)
             }
 
             return Result.success()
