@@ -2,6 +2,7 @@ package dev.imanuel.jewels.detection
 
 import android.content.Context
 import kotlinx.serialization.Serializable
+import androidx.core.content.edit
 
 @Serializable
 data class ServerSettings(val token: String, val host: String) : java.io.Serializable
@@ -19,15 +20,15 @@ fun loadSettings(context: Context): ServerSettings? {
 }
 
 fun saveSettings(settings: ServerSettings, context: Context) {
-    val pref = context.getSharedPreferences("server-settings", Context.MODE_PRIVATE).edit()
-    pref.putString("token", settings.token)
-    pref.putString("server", settings.host)
-    pref.apply()
+    context.getSharedPreferences("server-settings", Context.MODE_PRIVATE).edit {
+        putString("token", settings.token)
+        putString("server", settings.host)
+    }
 }
 
 fun deleteSettings(context: Context) {
-    val pref = context.getSharedPreferences("server-settings", Context.MODE_PRIVATE).edit()
-    pref.remove("token")
-    pref.remove("server")
-    pref.apply()
+    context.getSharedPreferences("server-settings", Context.MODE_PRIVATE).edit {
+        remove("token")
+        remove("server")
+    }
 }

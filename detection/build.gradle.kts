@@ -38,14 +38,15 @@ android {
 
 dependencies {
     implementation(libs.org.jetbrains.kotlinx.kotlinx.serialization.json)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.io.ktor.ktor.client.core)
+    implementation(libs.io.ktor.ktor.client.okhttp)
+    implementation(libs.io.ktor.ktor.client.content.negotiation)
+    implementation(libs.io.ktor.ktor.serialization.kotlinx.json)
     implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.android)
 
     implementation(platform(libs.io.insert.koin.koin.bom))
     implementation(libs.io.insert.koin.koin.core)
     implementation(libs.io.insert.koin.koin.androidx.workmanager)
 
-    api(libs.retrofit)
-    api(libs.okhttp)
     api(libs.androidx.work.runtime)
 }
