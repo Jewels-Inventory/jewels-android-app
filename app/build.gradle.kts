@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -95,7 +92,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "2.2.0"
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.orNull
     }
 
     packaging {

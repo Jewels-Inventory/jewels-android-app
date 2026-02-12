@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -88,20 +86,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_23
     }
 
-    kotlin {
-        target {
-            compilerOptions {
-                jvmTarget = JvmTarget.JVM_23
-            }
-        }
-    }
-
     buildFeatures {
         compose = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "2.2.0"
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.orNull
     }
 
     packaging {
