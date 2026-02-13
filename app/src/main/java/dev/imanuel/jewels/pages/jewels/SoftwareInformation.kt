@@ -1,4 +1,4 @@
-package dev.imanuel.jewels.pages
+package dev.imanuel.jewels.pages.jewels
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,26 +12,42 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.imanuel.jewels.detection.information.Device
 
 @Composable
-fun StorageInformation(device: dev.imanuel.jewels.detection.information.Device) {
+fun SoftwareInformation(device: Device) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier
             .verticalScroll(rememberScrollState())
             .weight(1f, fill = false)) {
-            device.drives?.forEach { drive ->
+            if (device.os != null) {
+                val os = device.os!!
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 16.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(drive.name, style = MaterialTheme.typography.headlineMedium)
-                        Text("Größe", style = MaterialTheme.typography.labelMedium)
+                        Text("Betriebssystem", style = MaterialTheme.typography.headlineMedium)
                         Text(
-                            "%.2f GB".format(drive.size),
+                            "${os.name} ${os.version}",
                             style = MaterialTheme.typography.bodyMedium
                         )
+                    }
+                }
+            }
+            if (device.kernel != null) {
+                val kernel = device.kernel!!
+                ElevatedCard(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Kernel", style = MaterialTheme.typography.headlineMedium)
+                        Text("Version", style = MaterialTheme.typography.labelMedium)
+                        Text(kernel.version, style = MaterialTheme.typography.bodyMedium)
+
+                        Text("Architektur", style = MaterialTheme.typography.labelMedium)
+                        Text(kernel.architecture, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }

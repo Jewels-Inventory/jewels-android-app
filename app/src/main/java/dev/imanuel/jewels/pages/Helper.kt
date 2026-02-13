@@ -34,7 +34,7 @@ fun getHandheldType(): HandheldType {
     }
 }
 
-fun UploadData(handheldType: HandheldType, device: Device, context: Context) {
+fun uploadData(handheldType: HandheldType, device: Device, context: Context) {
     val wearableRequest = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
         Data.Builder().putString("data", Json.encodeToString(Device.serializer(), device))
             .build()

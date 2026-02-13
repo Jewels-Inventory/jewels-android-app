@@ -1,4 +1,4 @@
-package dev.imanuel.jewels.pages
+package dev.imanuel.jewels.pages.jewels
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
+import dev.imanuel.jewels.pages.getHandheldType
 
 @Composable
 fun HardwareInformation(device: Device) {

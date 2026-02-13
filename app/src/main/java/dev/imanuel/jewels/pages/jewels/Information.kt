@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 
-package dev.imanuel.jewels.pages
+package dev.imanuel.jewels.pages.jewels
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,6 +34,8 @@ import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
 import dev.imanuel.jewels.pages.components.BottomNavBar
 import dev.imanuel.jewels.pages.components.TopBarActions
+import dev.imanuel.jewels.pages.getHandheldType
+import dev.imanuel.jewels.pages.uploadData
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -145,7 +146,7 @@ fun Information(
         },
         bottomBar = {
             if (!isTablet) {
-                BottomNavBar(hasWatch, navController)
+                BottomNavBar(navController)
             }
         },
         floatingActionButton = {
@@ -154,13 +155,15 @@ fun Information(
                     Text("Infos hochladen")
                 },
                 { Icon(ImageVector.vectorResource(R.drawable.ic_upload), "Infos hochladen") },
-                { UploadData(handheldType, device, context) })
+                { uploadData(handheldType, device, context) })
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
-        HorizontalPager(state = tabState, modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()) {
+        HorizontalPager(
+            state = tabState, modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
             when (SelectedTab.entries[it]) {
                 SelectedTab.Hardware -> Column(modifier = Modifier.fillMaxSize()) {
                     HardwareInformation(device)

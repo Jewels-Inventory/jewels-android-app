@@ -2,9 +2,6 @@
 accompanistPermissions = "0.37.3"
 adaptiveAndroid = "1.2.0"
 agp = "9.0.0"
-barcodeScanning = "17.3.0"
-cameraLifecycle = "1.5.3"
-cameraCamera2 = "1.5.3"
 composeMaterial = "1.5.6"
 coreSplashscreen = "1.2.0"
 kotlin = "2.3.10"
@@ -20,19 +17,21 @@ serializationJson = "1.10.0"
 coroutines = "1.10.2"
 workRuntime = "2.11.1"
 ktor = "3.4.0"
+constraintlayout = "2.2.1"
+constraintlayoutCompose = "1.1.1"
+coil = "3.3.0"
+onetimepassword = "2.4.1"
+playServicesBarcode = "16.1.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-adaptive-android = { module = "androidx.compose.material3.adaptive:adaptive-android", version.ref = "adaptiveAndroid" }
-androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraLifecycle" }
-androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCamera2" }
-androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCamera2" }
 
 androidx-wear-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "composeMaterial" }
 
 androidx-compose-material3-material3 = { module = "androidx.compose.material3:material3" }
-androidx-compose-ui-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-androidx-compose-ui-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -40,32 +39,40 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class-android" }
 
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
+
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 
-barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
+io-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+io-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+io-ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+io-ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
-io-ktor-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-io-ktor-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
-io-ktor-ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
-io-ktor-ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 
-kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+play-services-barcode = { group = "com.google.android.gms", name = "play-services-code-scanner", version.ref = "playServicesBarcode" }
 
-play-services-wearable = { module = "com.google.android.gms:play-services-wearable", version.ref = "playServicesWearable" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
-androidx-navigation-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+io-insert-koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
+io-insert-koin-core = { group = "io.insert-koin", name = "koin-core" }
+io-insert-koin-compose = { group = "io.insert-koin", name = "koin-compose" }
+io-insert-koin-android = { group = "io.insert-koin", name = "koin-android" }
+io-insert-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+io-insert-koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
 
-io-insert-koin-koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
-io-insert-koin-koin-core = { group = "io.insert-koin", name = "koin-core" }
-io-insert-koin-koin-compose = { group = "io.insert-koin", name = "koin-compose" }
-io-insert-koin-koin-android = { group = "io.insert-koin", name = "koin-android" }
-io-insert-koin-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
-io-insert-koin-koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
+org-jetbrains-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+org-jetbrains-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 
-org-jetbrains-kotlinx-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-org-jetbrains-kotlinx-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+org-jetbrains-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 
-org-jetbrains-kotlinx-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
+io-coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+io-coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+io-coil-coil-svg = { group = "io.coil-kt.coil3", name = "coil-svg", version.ref = "coil" }
+
+kotlin-onetimepassword = { group = "dev.turingcomplete", name = "kotlin-onetimepassword", version.ref = "onetimepassword" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
