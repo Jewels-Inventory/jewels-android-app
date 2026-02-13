@@ -72,6 +72,7 @@ import com.google.android.gms.common.util.DeviceProperties.isTablet
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.api.OneTimePassword
 import dev.imanuel.jewels.api.SharedOneTimePassword
+import dev.imanuel.jewels.api.SimpleOneTimePassword
 import dev.imanuel.jewels.api.User
 import dev.imanuel.jewels.api.createOneTimePassword
 import dev.imanuel.jewels.api.deleteOneTimePassword
@@ -91,60 +92,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-
-data class SimpleOneTimePassword(
-    val id: Long,
-    val accountName: String,
-    val accountIssuer: String,
-    val secretKey: String,
-    val canEdit: Boolean,
-    val iconSource: String,
-    val sharedWith: List<User> = emptyList(),
-) {
-    companion object {
-        fun fromOneTimePassword(otp: OneTimePassword): SimpleOneTimePassword {
-            val iconSource =
-                if (otp.brandIconSimilarity == 0.0 && otp.simpleIconSimilarity == 0.0) {
-                    "/static/img/default.svg"
-                } else if (otp.brandIconSimilarity > otp.simpleIconSimilarity) {
-                    "/api/icons/${otp.brandIcon}"
-                } else {
-                    "/api/icons/${otp.simpleIcon}"
-                }
-
-            return SimpleOneTimePassword(
-                otp.id,
-                otp.accountName,
-                otp.accountIssuer,
-                otp.secretKey,
-                otp.canEdit,
-                iconSource,
-                otp.sharedWith,
-            )
-        }
-
-        fun fromSharedOneTimePassword(otp: SharedOneTimePassword): SimpleOneTimePassword {
-            val iconSource =
-                if (otp.brandIconSimilarity == 0.0 && otp.simpleIconSimilarity == 0.0) {
-                    "/static/img/default.svg"
-                } else if (otp.brandIconSimilarity > otp.simpleIconSimilarity) {
-                    "/api/icons/${otp.brandIcon}"
-                } else {
-                    "/api/icons/${otp.simpleIcon}"
-                }
-
-            return SimpleOneTimePassword(
-                otp.id,
-                otp.accountName,
-                otp.accountIssuer,
-                otp.secretKey,
-                otp.canEdit,
-                iconSource,
-                emptyList(),
-            )
-        }
-    }
-}
 
 fun generateOtp(secretKey: String): String {
     return GoogleAuthenticator(secretKey.encodeToByteArray()).generate()

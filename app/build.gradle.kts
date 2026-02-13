@@ -151,4 +151,8 @@ dependencies {
     implementation(libs.org.jetbrains.kotlinx.coroutines.android)
 
     implementation(libs.kotlin.onetimepassword)
+
+    implementation(libs.androidx.glance)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 }

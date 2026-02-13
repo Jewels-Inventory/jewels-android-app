@@ -103,3 +103,58 @@ data class User(
     @SerialName("profilePicture")
     val profilePicture: String,
 )
+
+
+data class SimpleOneTimePassword(
+    val id: Long,
+    val accountName: String,
+    val accountIssuer: String,
+    val secretKey: String,
+    val canEdit: Boolean,
+    val iconSource: String,
+    val sharedWith: List<User> = emptyList(),
+) {
+    companion object {
+        fun fromOneTimePassword(otp: OneTimePassword): SimpleOneTimePassword {
+            val iconSource =
+                if (otp.brandIconSimilarity == 0.0 && otp.simpleIconSimilarity == 0.0) {
+                    "/static/img/default.svg"
+                } else if (otp.brandIconSimilarity > otp.simpleIconSimilarity) {
+                    "/api/icons/${otp.brandIcon}"
+                } else {
+                    "/api/icons/${otp.simpleIcon}"
+                }
+
+            return SimpleOneTimePassword(
+                otp.id,
+                otp.accountName,
+                otp.accountIssuer,
+                otp.secretKey,
+                otp.canEdit,
+                iconSource,
+                otp.sharedWith,
+            )
+        }
+
+        fun fromSharedOneTimePassword(otp: SharedOneTimePassword): SimpleOneTimePassword {
+            val iconSource =
+                if (otp.brandIconSimilarity == 0.0 && otp.simpleIconSimilarity == 0.0) {
+                    "/static/img/default.svg"
+                } else if (otp.brandIconSimilarity > otp.simpleIconSimilarity) {
+                    "/api/icons/${otp.brandIcon}"
+                } else {
+                    "/api/icons/${otp.simpleIcon}"
+                }
+
+            return SimpleOneTimePassword(
+                otp.id,
+                otp.accountName,
+                otp.accountIssuer,
+                otp.secretKey,
+                otp.canEdit,
+                iconSource,
+                emptyList(),
+            )
+        }
+    }
+}
