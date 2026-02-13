@@ -154,7 +154,7 @@ fun OneTimePasswordItem(
 
     val shareOtp = {
         coroutineScope.launch {
-            if (shareOneTimePassword(otp.id, sharedWith, httpClient)) {
+            if (shareOneTimePassword(otp.id, sharedWith, httpClient, context)) {
                 Toast.makeText(context, "${otp.accountIssuer} wurde geteilt", Toast.LENGTH_SHORT)
                     .show()
                 onShareSuccess(sharedWith.map { id -> users.find { it.id == id }!! })
@@ -167,7 +167,7 @@ fun OneTimePasswordItem(
     }
     val updateOtp = {
         coroutineScope.launch {
-            if (updateOneTimePassword(otp.id, editAccountName, httpClient)) {
+            if (updateOneTimePassword(otp.id, editAccountName, httpClient, context)) {
                 Toast.makeText(context, "${otp.accountIssuer} wurde umbenannt", Toast.LENGTH_SHORT)
                     .show()
                 onUpdateSuccess(editAccountName)
@@ -180,7 +180,7 @@ fun OneTimePasswordItem(
     }
     val deleteOtp = {
         coroutineScope.launch {
-            if (deleteOneTimePassword(otp.id, httpClient)) {
+            if (deleteOneTimePassword(otp.id, httpClient, context)) {
                 Toast.makeText(context, "${otp.accountIssuer} wurde gelöscht", Toast.LENGTH_SHORT)
                     .show()
                 onDeleteSuccess()
@@ -435,6 +435,8 @@ fun OneTimePasswords(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
+    val reachability = rememberReachability()
+
     var isLoading by remember { mutableStateOf(false) }
     var loadingFailed by remember { mutableStateOf(false) }
     var myOneTimePasswords by remember { mutableStateOf<List<OneTimePassword>>(emptyList()) }
@@ -448,7 +450,7 @@ fun OneTimePasswords(
     val saveOtp = { issuer: String, secret: String, name: String ->
         coroutineScope.launch {
             try {
-                val result = createOneTimePassword(name, issuer, secret, httpClient)
+                val result = createOneTimePassword(name, issuer, secret, httpClient, context)
                 val otpComparator =
                     compareBy<OneTimePassword>({ it.accountIssuer })
                         .thenBy({ it.accountName })
@@ -461,6 +463,10 @@ fun OneTimePasswords(
                     "$issuer konnte leider nicht hinzugefügt werden",
                     Toast.LENGTH_LONG
                 ).show()
+            }
+            try {
+                getOneTimePasswords(httpClient, context)
+            } catch (ex: Exception) {
             }
         }
     }
@@ -484,7 +490,7 @@ fun OneTimePasswords(
         coroutineScope.launch {
             isLoading = true
             try {
-                val otps = getOneTimePasswords(httpClient)
+                val otps = getOneTimePasswords(httpClient, context)
                 myOneTimePasswords = otps.myOneTimePasswords
                 val sharedOtps = HashMap<String, List<SharedOneTimePassword>>()
                 for (otp in otps.sharedOneTimePasswords) {
@@ -530,7 +536,7 @@ fun OneTimePasswords(
                 BottomNavBar(navController)
             }
         }, floatingActionButton = {
-            if (!isLoading && !loadingFailed) {
+            if (!isLoading && !loadingFailed && reachability.value == Reachability.Reachable) {
                 FloatingActionButton(onClick = {
                     startScan()
                 }) {
@@ -587,7 +593,8 @@ fun OneTimePasswords(
                         key = { otp -> otp.id }
                     ) { otp ->
                         OneTimePasswordItem(
-                            otp = SimpleOneTimePassword.fromOneTimePassword(otp),
+                            otp = SimpleOneTimePassword.fromOneTimePassword(otp)
+                                .copy(canEdit = reachability.value == Reachability.Reachable),
                             users = users,
                             onShareSuccess = { sharedWith ->
                                 myOneTimePasswords = myOneTimePasswords.map {

@@ -23,6 +23,7 @@ coil = "3.3.0"
 onetimepassword = "2.4.1"
 playServicesBarcode = "16.1.0"
 glance = "1.1.1"
+tink = "1.20.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -78,6 +79,8 @@ kotlin-onetimepassword = { group = "dev.turingcomplete", name = "kotlin-onetimep
 androidx-glance = { group = "androidx.glance", name = "glance", version.ref = "glance" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+
+tink-android = { group = "com.google.crypto.tink", name = "tink-android", version.ref = "tink" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

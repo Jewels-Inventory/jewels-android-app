@@ -1,6 +1,5 @@
 package dev.imanuel.jewels.pages
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,7 +22,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.detection.saveSettings
 import dev.imanuel.jewels.utils.rememberJsonQrScanner
-import dev.imanuel.jewels.utils.rememberQrScanner
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +36,8 @@ fun ServerSetup(
         },
         onCancel = { },
         onError = {
-            Toast.makeText(context, "QR Code konnte nicht gelesen werden", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "QR Code konnte nicht gelesen werden", Toast.LENGTH_SHORT)
+                .show()
         },
     )
 
