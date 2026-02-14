@@ -1,5 +1,6 @@
 package dev.imanuel.jewels.pages.components
 
+import android.content.Context
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,22 +14,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.glance.LocalContext
 import androidx.navigation.NavController
+import com.google.android.gms.common.util.DeviceProperties.isTablet
 import dev.imanuel.jewels.NavigationPage
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.pages.getHandheldType
+import org.koin.compose.koinInject
 
 
 @Composable
 fun NavRail(
     navController: NavController,
-    isTablet: Boolean,
+    context: Context = koinInject(),
     content: @Composable () -> Unit
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
-        if (isTablet) {
-            val handheldType = getHandheldType()
-
+        if (isTablet(context)) {
             NavigationRail(
                 modifier = Modifier
                     .fillMaxHeight()

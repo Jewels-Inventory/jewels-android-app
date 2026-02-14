@@ -157,20 +157,17 @@ fun MainComposable(
         ) {
             composable(NavigationPage.Jewels.name) {
                 NavRail(
-                    isTablet = isTablet,
                     navController = navController,
                 ) {
                     Jewels(
                         watch = watch,
                         handheld = handheld,
-                        isTablet = isTablet,
                         navController = navController,
                         goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
                 }
             }
             composable(NavigationPage.OneTimePasswords.name) {
                 NavRail(
-                    isTablet = isTablet,
                     navController = navController,
                 ) {
                     OneTimePasswords(
