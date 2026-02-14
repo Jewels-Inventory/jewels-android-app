@@ -47,6 +47,6 @@ fun TopBarActions(
             contentColor = MaterialTheme.colorScheme.primary
         )
     ) {
-        Icon(ImageVector.vectorResource(R.drawable.ic_logout), "Gerät entfernen")
+        Icon(ImageVector.vectorResource(R.drawable.ic_logout), "Abmelden")
     }
 }

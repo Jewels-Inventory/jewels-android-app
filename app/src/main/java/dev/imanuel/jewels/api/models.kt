@@ -9,14 +9,12 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import kotlin.time.Instant
 
 @Serializable
-@JsonIgnoreUnknownKeys
 data class OneTimePasswords(
     val myOneTimePasswords: List<OneTimePassword> = emptyList(),
     val sharedOneTimePasswords: List<SharedOneTimePassword> = emptyList(),
 )
 
 @Serializable
-@JsonIgnoreUnknownKeys
 data class OneTimePassword(
     val id: Long,
     var accountName: String,
@@ -31,7 +29,6 @@ data class OneTimePassword(
 )
 
 @Serializable
-@JsonIgnoreUnknownKeys
 data class SharedOneTimePassword(
     val id: Long,
     val accountName: String,
@@ -46,7 +43,6 @@ data class SharedOneTimePassword(
 )
 
 @Serializable
-@JsonIgnoreUnknownKeys
 data class User(
     val id: Long,
     val name: String,
@@ -110,7 +106,6 @@ data class SimpleOneTimePassword(
 }
 
 @Serializable
-@JsonIgnoreUnknownKeys
 data class Device(
     val id: String,
     val type: String,

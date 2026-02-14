@@ -14,7 +14,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.android.gms.common.util.DeviceProperties.isTablet
-import dev.imanuel.jewels.api.cacheOneTimePasswords
+import dev.imanuel.jewels.api.checkServer
+import dev.imanuel.jewels.api.getCached
 import dev.imanuel.jewels.detection.SendDataWorker
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
@@ -133,7 +134,7 @@ fun rememberReachability(
                     flow {
                         emit(Reachability.Checking)
                         while (currentCoroutineContext().isActive) {
-                            val (ok, _) = cacheOneTimePasswords(httpClient, context)
+                            val ok = checkServer(httpClient)
                             emit(if (ok) Reachability.Reachable else Reachability.Unreachable)
                             delay(probeIntervalMs)
                         }
@@ -144,4 +145,16 @@ fun rememberReachability(
     }
 
     return reachabilityFlow.collectAsStateWithLifecycle(initialValue = Reachability.Checking)
+}
+
+infix fun Double.format(fmt: String): String {
+    return "%${fmt}".format(this)
+}
+
+infix fun Float.format(fmt: String): String {
+    return "%${fmt}".format(this)
+}
+
+val json = Json {
+    ignoreUnknownKeys = true
 }

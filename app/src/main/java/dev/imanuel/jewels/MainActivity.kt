@@ -49,6 +49,7 @@ import dev.imanuel.jewels.pages.OneTimePasswords
 import dev.imanuel.jewels.pages.ServerSetup
 import dev.imanuel.jewels.pages.components.NavRail
 import dev.imanuel.jewels.pages.jewels.Jewels
+import dev.imanuel.jewels.pages.json
 import dev.imanuel.jewels.ui.theme.JewelsTheme
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -174,7 +175,7 @@ fun MainComposable(
                             if (item != null) {
                                 val data = item.data
                                 if (data != null) {
-                                    watch = Json.decodeFromString(
+                                    watch = json.decodeFromString(
                                         Device.serializer(),
                                         data.decodeToString()
                                     )

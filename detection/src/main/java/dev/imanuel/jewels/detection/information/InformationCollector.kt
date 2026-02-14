@@ -64,7 +64,6 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
                 if (it.isPrimary) {
                     Drive(
                         name = "Interner Speicher",
-                        driver = UNKNOWN,
                         manufacturer = UNKNOWN,
                         size = storageStatsManager.getTotalBytes(StorageManager.UUID_DEFAULT) / ONE_GIB,
                         model = UNKNOWN
@@ -72,7 +71,6 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
                 } else if (storageUuid != null) {
                     Drive(
                         name = it.getDescription(context),
-                        driver = UNKNOWN,
                         manufacturer = UNKNOWN,
                         size = (it.directory?.totalSpace ?: 0) / ONE_GB,
                         model = UNKNOWN
@@ -90,7 +88,6 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
                     if (storageVolume.isPrimary) {
                         Drive(
                             name = "Interner Speicher",
-                            driver = UNKNOWN,
                             manufacturer = UNKNOWN,
                             size = storageStatsManager.getTotalBytes(StorageManager.UUID_DEFAULT) / ONE_GIB,
                             model = UNKNOWN
@@ -98,7 +95,6 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
                     } else {
                         Drive(
                             name = storageVolume.getDescription(context),
-                            driver = UNKNOWN,
                             manufacturer = UNKNOWN,
                             size = it.totalSpace / ONE_GB,
                             model = UNKNOWN

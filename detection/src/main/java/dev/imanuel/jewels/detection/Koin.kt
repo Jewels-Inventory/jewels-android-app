@@ -11,6 +11,7 @@ import io.ktor.client.request.bearerAuth
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
@@ -23,7 +24,7 @@ val detectionModule = module {
         val settings = loadSettings(androidContext());
         HttpClient(OkHttp) {
             install(ContentNegotiation) {
-                json()
+                json(Json { ignoreUnknownKeys = true })
             }
             defaultRequest {
                 contentType(ContentType.Application.Json)

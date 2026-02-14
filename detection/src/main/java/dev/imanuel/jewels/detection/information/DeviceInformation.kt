@@ -1,19 +1,27 @@
+@file:OptIn(ExperimentalSerializationApi::class)
 package dev.imanuel.jewels.detection.information
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
 enum class DeviceType {
+    @JsonNames("watch")
     Watch,
-    Handheld
+    @JsonNames("phone")
+    Handheld,
+    @JsonNames("computer")
+    Computer,
+    @JsonNames("other")
+    Other
 }
 
 @Serializable
 data class Drive(
     val name: String,
-    val driver: String,
     val manufacturer: String,
     val model: String,
     val size: Float
@@ -28,13 +36,9 @@ data class Cpu(
     val threads: Int
 )
 
-@OptIn(ExperimentalSerializationApi::class)
-@JsonIgnoreUnknownKeys
 @Serializable
 data class Mainboard(val manufacturer: String, val version: String, val model: String)
 
-@OptIn(ExperimentalSerializationApi::class)
-@JsonIgnoreUnknownKeys
 @Serializable
 data class Kernel(val version: String, val architecture: String)
 
