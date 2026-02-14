@@ -2,7 +2,11 @@
 
 package dev.imanuel.jewels
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -11,8 +15,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +25,16 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.PutDataRequest
@@ -42,6 +54,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.json.Json
 import org.koin.compose.koinInject
+import java.time.Duration
+import java.time.ZonedDateTime
+import java.util.concurrent.TimeUnit
 
 enum class NavigationPage {
     ServerSetup,
@@ -58,6 +73,16 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
+        val notificationChannel = NotificationChannel(
+            "device-eol",
+            "Neues Gerät",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        notificationChannel.description = "Benachrichtigung wenn du ein neues Gerät brauchst"
+        notificationChannel.enableVibration(true)
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(notificationChannel)
+
         val settings = loadSettings(this)
         if (settings != null) {
             val request = PutDataRequest.create("/settings").setUrgent().apply {
@@ -66,20 +91,52 @@ class MainActivity : ComponentActivity() {
             dataClient.putDataItem(request)
         }
 
+        val now = ZonedDateTime.now()
+        val nextNoon = now
+            .withHour(12)
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0)
+            .let {
+                if (it.isAfter(now)) it else it.plusDays(1)
+            }
+
+        val initialDelay = Duration.between(now, nextNoon).toMinutes()
+        val request =
+            PeriodicWorkRequestBuilder<EolCheckWorker>(1, TimeUnit.DAYS)
+                .setInitialDelay(initialDelay, TimeUnit.MINUTES)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
+                .build()
+
+        WorkManager
+            .getInstance(this)
+            .enqueueUniquePeriodicWork(
+                "daily-eol-check",
+                ExistingPeriodicWorkPolicy.UPDATE,
+                request
+            )
+        WorkManager.getInstance(this).enqueueUniqueWork(
+            "check-once",
+            ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequest.from(EolCheckWorker::class.java)
+        )
+
         setContent {
-            val windowSizeClass = calculateWindowSizeClass(this)
-            val isTablet = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
-            MainComposable(isTablet = isTablet)
+            MainComposable()
         }
     }
 }
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainComposable(
     context: Context = koinInject(),
     collector: InformationCollector = koinInject(),
-    isTablet: Boolean,
 ) {
     val navController = rememberNavController()
     val settings = loadSettings(context)
@@ -87,6 +144,15 @@ fun MainComposable(
 
     var watch by remember { mutableStateOf<Device?>(null) }
     var handheld by remember { mutableStateOf<Device?>(null) }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val permissionState = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+        LaunchedEffect(Unit) {
+            if (!permissionState.status.isGranted) {
+                permissionState.launchPermissionRequest()
+            }
+        }
+    }
 
     LaunchedEffect(handheld) {
         coroutineScope.launch {

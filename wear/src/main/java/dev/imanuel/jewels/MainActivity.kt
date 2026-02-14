@@ -24,6 +24,7 @@ import androidx.wear.compose.material.Text
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
@@ -128,10 +129,9 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
             } else if (deviceInformation != null) {
                 Button(onClick = {
                     val request = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
-                        Data
-                            .Builder()
-                            .putInt("type", DeviceType.Watch.ordinal)
-                            .build()
+                        workDataOf(
+                            "type" to DeviceType.Watch.ordinal
+                        )
                     ).build()
                     WorkManager.getInstance(context).enqueue(request)
                     Toast.makeText(context, "Daten werden hochgeladen", Toast.LENGTH_LONG).show()

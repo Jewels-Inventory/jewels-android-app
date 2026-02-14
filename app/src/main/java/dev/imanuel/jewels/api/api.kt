@@ -1,6 +1,7 @@
 package dev.imanuel.jewels.api
 
 import android.content.Context
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -141,4 +142,18 @@ suspend fun getUsers(httpClient: HttpClient): List<User> {
     }
 
     return res.body()
+}
+
+suspend fun getEolDevices(httpClient: HttpClient): Map<String, List<Device>> {
+    val res = httpClient.get {
+        url("eol")
+    }
+
+    try {
+        return res.body()
+    } catch (ex: Exception) {
+        Log.e("getEolDevices", ex.message!!)
+        Log.e("getEolDevices", ex.stackTraceToString())
+        throw ex
+    }
 }

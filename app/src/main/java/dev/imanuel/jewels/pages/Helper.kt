@@ -6,15 +6,14 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.widget.Toast
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.google.android.gms.common.util.DeviceProperties.isTablet
 import dev.imanuel.jewels.api.cacheOneTimePasswords
 import dev.imanuel.jewels.detection.SendDataWorker
 import dev.imanuel.jewels.detection.information.Device
@@ -48,8 +47,8 @@ enum class HandheldType {
 }
 
 @Composable
-fun getHandheldType(): HandheldType {
-    return if (currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(600)) {
+fun getHandheldType(context: Context = koinInject()): HandheldType {
+    return if (isTablet(context)) {
         HandheldType.Tablet
     } else {
         HandheldType.Smartphone
@@ -58,8 +57,9 @@ fun getHandheldType(): HandheldType {
 
 fun uploadData(handheldType: HandheldType, device: Device, context: Context) {
     val wearableRequest = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
-        Data.Builder().putString("data", Json.encodeToString(Device.serializer(), device))
-            .build()
+        workDataOf(
+            "data" to Json.encodeToString(Device.serializer(), device)
+        )
     ).build()
     WorkManager.getInstance(context).enqueue(wearableRequest)
     Toast.makeText(
@@ -119,10 +119,9 @@ enum class Reachability {
 @Composable
 fun rememberReachability(
     httpClient: HttpClient = koinInject(),
+    context: Context = koinInject(),
     probeIntervalMs: Long = 15_000L,
 ): State<Reachability> {
-    val context = LocalContext.current.applicationContext
-
     val reachabilityFlow = remember(httpClient, probeIntervalMs) {
         context
             .networkStatusFlow()
