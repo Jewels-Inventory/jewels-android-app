@@ -71,9 +71,9 @@ fun Jewels(
                     if (watch != null) {
                         uploadData(handheldType, watch, context)
                     }
-//                    if (handheld != null) {
-//                        uploadData(handheldType, handheld, context)
-//                    }
+                    if (handheld != null) {
+                        uploadData(handheldType, handheld, context)
+                    }
                 })
         },
         floatingActionButtonPosition = FabPosition.End
