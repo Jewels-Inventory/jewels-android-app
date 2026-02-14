@@ -32,27 +32,6 @@ private fun String.upperFirst(): String {
 }
 
 class InformationCollectorImpl(private val context: Context) : InformationCollector {
-    private fun getRetailDeviceDetails(): RetailDeviceDetails {
-        val devices = context.resources.openRawResource(R.raw.supported_devices)
-            .bufferedReader(Charsets.UTF_16)
-        val matchingDevice = devices.lines().filter {
-            it.isNotBlank() && it.matches(Regex("^.*,.*,${Build.DEVICE},${Build.MODEL}\$"))
-        }.findFirst()
-
-        return if (matchingDevice.isPresent) {
-            val splitDeviceString = matchingDevice.get().split(',')
-            RetailDeviceDetails(
-                manufacturer = splitDeviceString.getOrElse(0) { Build.MANUFACTURER },
-                retailName = splitDeviceString.getOrElse(1) { Build.MODEL },
-            )
-        } else {
-            RetailDeviceDetails(
-                manufacturer = Build.MANUFACTURER,
-                retailName = Build.MODEL,
-            )
-        }
-    }
-
     private fun getId(): String {
         val pref = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
         val id =
@@ -159,13 +138,12 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
             version = System.getProperty("os.version") ?: "Unbekannt",
             architecture = Build.SUPPORTED_ABIS[0]
         )
-        val retailDevice = getRetailDeviceDetails()
 
         return Device(
             getId(),
             Settings.Global.getString(context.contentResolver, "device_name"),
-            retailDevice.retailName,
-            retailDevice.manufacturer,
+            Build.MODEL,
+            "",
             os,
             storage,
             ram,
