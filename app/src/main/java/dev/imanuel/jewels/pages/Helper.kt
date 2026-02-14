@@ -64,9 +64,9 @@ fun uploadData(handheldType: HandheldType, device: Device, context: Context) {
     WorkManager.getInstance(context).enqueue(wearableRequest)
     Toast.makeText(
         context, if (device.type == DeviceType.Handheld) {
-            "Infos vom $handheldType ${device.model} werden hochgeladen"
+            "Infos vom $handheldType werden hochgeladen"
         } else {
-            "Infos von der Watch ${device.model} werden hochgeladen"
+            "Infos von der Smartwatch werden hochgeladen"
         }, Toast.LENGTH_LONG
     )
         .show()
