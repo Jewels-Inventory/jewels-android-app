@@ -21,7 +21,6 @@ class ApiClient(private val context: Context, private val httpClient: HttpClient
         if (settings != null) {
             try {
                 httpClient.post("device/${deviceType}") {
-                    bearerAuth(settings.token)
                     setBody(device)
                 }
             } catch (ex: Exception) {

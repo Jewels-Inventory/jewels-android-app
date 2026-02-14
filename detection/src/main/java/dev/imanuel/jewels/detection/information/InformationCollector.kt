@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.RandomAccessFile
 import java.util.UUID
+import androidx.core.content.edit
 
 private data class RetailDeviceDetails(
     val manufacturer: String,
@@ -56,7 +57,7 @@ class InformationCollectorImpl(private val context: Context) : InformationCollec
         val pref = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
         val id =
             pref.getString("app_id", UUID.randomUUID().toString()) ?: UUID.randomUUID().toString()
-        pref.edit().putString("app_id", id).apply()
+        pref.edit { putString("app_id", id) }
 
         return id
     }

@@ -8,51 +8,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
+import dev.imanuel.jewels.NavigationPage
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.pages.HandheldType
 import dev.imanuel.jewels.pages.getHandheldType
 
 @Composable
-fun BottomNavBar(hasWatch: Boolean, navController: NavController) {
-    val handheldType = getHandheldType()
-
+fun BottomNavBar(navController: NavController) {
     NavigationBar {
         NavigationBarItem(
             onClick = {
-                navController.navigate("jewels")
+                navController.navigate(NavigationPage.Jewels.name)
             },
-            selected = navController.currentDestination?.route == "jewels",
+            selected = navController.currentDestination?.route == NavigationPage.Jewels.name,
             label = { Text("Jewels") },
             icon = {
                 Icon(ImageVector.vectorResource(R.drawable.ic_jewels), "Jewels")
             })
         NavigationBarItem(
             onClick = {
-                navController.navigate("handheld")
+                navController.navigate(NavigationPage.OneTimePasswords.name)
             },
-            selected = navController.currentDestination?.route == "handheld",
-            label = { Text(handheldType.toString()) },
+            selected = navController.currentDestination?.route == NavigationPage.OneTimePasswords.name,
+            label = { Text("Zwei-Faktor Codes") },
             icon = {
-                Icon(
-                    ImageVector.vectorResource(
-                        if (handheldType == HandheldType.Tablet) {
-                            R.drawable.ic_tablet
-                        } else {
-                            R.drawable.ic_phone
-                        }
-                    ), getHandheldType().toString()
-                )
+                Icon(ImageVector.vectorResource(R.drawable.ic_otp), "Zwei-Faktor Codes")
             })
-        if (hasWatch) {
-            NavigationBarItem(
-                onClick = {
-                    navController.navigate("watch")
-                },
-                selected = navController.currentDestination?.route == "watch",
-                label = { Text("Smartwatch") },
-                icon = {
-                    Icon(ImageVector.vectorResource(R.drawable.ic_watch), "Smartwatch")
-                })
-        }
     }
 }

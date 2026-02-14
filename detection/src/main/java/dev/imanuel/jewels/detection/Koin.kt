@@ -7,6 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.bearerAuth
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -26,6 +27,7 @@ val detectionModule = module {
             }
             defaultRequest {
                 contentType(ContentType.Application.Json)
+                bearerAuth(settings?.token ?: "")
                 val server = settings?.host ?: "https://jewels.ulbricht.cloud"
                 url("$server/api/")
             }

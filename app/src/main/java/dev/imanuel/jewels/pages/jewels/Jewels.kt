@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package dev.imanuel.jewels.pages
+package dev.imanuel.jewels.pages.jewels
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
@@ -27,6 +27,8 @@ import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.pages.components.BottomNavBar
 import dev.imanuel.jewels.pages.components.TopBarActions
+import dev.imanuel.jewels.pages.getHandheldType
+import dev.imanuel.jewels.pages.uploadData
 import org.koin.compose.koinInject
 
 @Composable
@@ -55,7 +57,7 @@ fun Jewels(
         },
         bottomBar = {
             if (!isTablet) {
-                BottomNavBar(watch != null, navController)
+                BottomNavBar(navController)
             }
         },
         floatingActionButton = {
@@ -66,10 +68,10 @@ fun Jewels(
                 { Icon(ImageVector.vectorResource(R.drawable.ic_upload), "Infos hochladen") },
                 {
                     if (watch != null) {
-                        UploadData(handheldType, watch, context)
+                        uploadData(handheldType, watch, context)
                     }
                     if (handheld != null) {
-                        UploadData(handheldType, handheld, context)
+                        uploadData(handheldType, handheld, context)
                     }
                 })
         },

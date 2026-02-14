@@ -39,7 +39,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
-        minSdk = 26
+        minSdk = 31
         targetSdk = 34
         versionCode = computeVersionCode()
         versionName = "1.0"
@@ -111,20 +111,20 @@ dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.foundation)
-    implementation(libs.androidx.compose.ui.ui)
-    implementation(libs.androidx.compose.ui.ui.graphics)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.material3.material3)
 
-    implementation(libs.org.jetbrains.kotlinx.kotlinx.serialization.json)
-    implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.core)
+    implementation(libs.org.jetbrains.kotlinx.serialization.json)
+    implementation(libs.org.jetbrains.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.play.services)
-    implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.android)
+    implementation(libs.org.jetbrains.kotlinx.coroutines.android)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.core.splashscreen)
 
-    implementation(platform(libs.io.insert.koin.koin.bom))
-    implementation(libs.io.insert.koin.koin.core)
-    implementation(libs.io.insert.koin.koin.compose)
-    implementation(libs.io.insert.koin.koin.android)
-    implementation(libs.io.insert.koin.koin.androidx.workmanager)
+    implementation(platform(libs.io.insert.koin.bom))
+    implementation(libs.io.insert.koin.core)
+    implementation(libs.io.insert.koin.compose)
+    implementation(libs.io.insert.koin.android)
+    implementation(libs.io.insert.koin.androidx.workmanager)
 }

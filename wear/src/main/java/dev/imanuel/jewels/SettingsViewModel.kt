@@ -1,5 +1,6 @@
 package dev.imanuel.jewels
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -11,11 +12,11 @@ import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.detection.saveSettings
 import kotlinx.serialization.json.Json
 
-class SettingsViewModel(private val context: Context) : ViewModel(),
+class SettingsViewModel(@param:SuppressLint("StaticFieldLeak") private val context: Context) :
+    ViewModel(),
     DataClient.OnDataChangedListener {
     private var _settings: MutableState<ServerSettings?> = mutableStateOf(null)
 
-    val settings: ServerSettings? = _settings.value
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents

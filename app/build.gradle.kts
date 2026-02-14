@@ -40,7 +40,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
-        minSdk = 31
+        minSdk = 30
         targetSdk = 36
         versionCode = computeVersionCode()
         versionName = "1.0"
@@ -107,32 +107,54 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
 
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.foundation)
-    implementation(libs.androidx.compose.ui.ui)
-    implementation(libs.androidx.compose.ui.ui.graphics)
-    implementation(libs.androidx.compose.material3.material3)
-    implementation(libs.androidx.navigation.navigation.compose)
 
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
-    implementation(libs.accompanist.permissions)
-    implementation(libs.org.jetbrains.kotlinx.kotlinx.serialization.json)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.material3.material3)
+
+    implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.constraintlayout.compose)
+
     implementation(libs.androidx.adaptive.android)
-    implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.play.services)
+
+    implementation(libs.accompanist.permissions)
+
     implementation(libs.androidx.work.runtime)
 
-    implementation(platform(libs.io.insert.koin.koin.bom))
-    implementation(libs.io.insert.koin.koin.core)
-    implementation(libs.io.insert.koin.koin.compose)
-    implementation(libs.io.insert.koin.koin.android)
-    implementation(libs.io.insert.koin.koin.androidx.compose)
-    implementation(libs.io.insert.koin.koin.androidx.workmanager)
-    implementation(libs.play.services.wearable)
+    implementation(libs.org.jetbrains.kotlinx.serialization.json)
+    implementation(libs.org.jetbrains.kotlinx.coroutines.core)
+
+    implementation(libs.kotlinx.coroutines.play.services)
+
+    implementation(libs.io.ktor.client.core)
+
+    implementation(platform(libs.io.insert.koin.bom))
+    implementation(libs.io.insert.koin.core)
+    implementation(libs.io.insert.koin.compose)
+    implementation(libs.io.insert.koin.android)
+    implementation(libs.io.insert.koin.androidx.compose)
+    implementation(libs.io.insert.koin.androidx.workmanager)
+
     implementation(libs.androidx.material3.window.size)
 
-    implementation(libs.barcode.scanning)
-    implementation(libs.org.jetbrains.kotlinx.kotlinx.coroutines.android)
+    implementation(libs.io.coil.compose)
+    implementation(libs.io.coil.network.okhttp)
+    implementation(libs.io.coil.coil.svg)
+
+    implementation(libs.play.services.wearable)
+    implementation(libs.play.services.barcode)
+
+    implementation(libs.org.jetbrains.kotlinx.coroutines.android)
+
+    implementation(libs.kotlin.onetimepassword)
+
+    implementation(libs.androidx.glance)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+
+    implementation(libs.tink.android)
 }
