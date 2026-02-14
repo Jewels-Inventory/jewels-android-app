@@ -85,6 +85,7 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
                                 ServerSettings.serializer(),
                                 data.decodeToString()
                             )
+                            saveSettings(settings!!, context)
                         }
                     }
 
@@ -127,10 +128,9 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
             } else if (deviceInformation != null) {
                 Button(onClick = {
                     val request = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
-                        Data.Builder().putString(
-                            "data",
-                            Json.encodeToString(Device.serializer(), deviceInformation!!)
-                        )
+                        Data
+                            .Builder()
+                            .putInt("type", DeviceType.Watch.ordinal)
                             .build()
                     ).build()
                     WorkManager.getInstance(context).enqueue(request)

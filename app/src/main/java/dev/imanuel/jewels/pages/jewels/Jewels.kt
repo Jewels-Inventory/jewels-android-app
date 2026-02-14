@@ -3,6 +3,7 @@
 package dev.imanuel.jewels.pages.jewels
 
 import android.content.Context
+import android.service.controls.DeviceTypes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.android.gms.common.util.DeviceProperties
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.detection.information.Device
@@ -38,7 +40,6 @@ fun Jewels(
     handheld: Device?,
     watch: Device?,
     navController: NavController,
-    isTablet: Boolean,
     goToSetup: () -> Unit
 ) {
     val handheldType = getHandheldType()
@@ -56,7 +57,7 @@ fun Jewels(
                 })
         },
         bottomBar = {
-            if (!isTablet) {
+            if (!DeviceProperties.isTablet(context)) {
                 BottomNavBar(navController)
             }
         },
@@ -70,9 +71,9 @@ fun Jewels(
                     if (watch != null) {
                         uploadData(handheldType, watch, context)
                     }
-                    if (handheld != null) {
-                        uploadData(handheldType, handheld, context)
-                    }
+//                    if (handheld != null) {
+//                        uploadData(handheldType, handheld, context)
+//                    }
                 })
         },
         floatingActionButtonPosition = FabPosition.End
