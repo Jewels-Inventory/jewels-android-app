@@ -20,39 +20,33 @@ class SendDataWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(appContext, workerParams) {
     private suspend fun sendHandheldData() {
-        withContext(Dispatchers.IO) {
-            val device = informationCollector.collect(DeviceType.Handheld)
+        val device = informationCollector.collect(DeviceType.Handheld)
 
-            sendData(device)
-        }
+        sendData(device)
     }
 
     private suspend fun sendWatchData() {
-        withContext(Dispatchers.IO) {
-            val device = informationCollector.collect(DeviceType.Watch)
+        val device = informationCollector.collect(DeviceType.Watch)
 
-            sendData(device)
-        }
+        sendData(device)
     }
 
     private suspend fun sendData(device: Device) {
-        withContext(Dispatchers.IO) {
-            try {
-                client.sendData(device)
-            } catch (e: dev.imanuel.jewels.detection.information.PushException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        applicationContext,
-                        "Die Daten konnten nicht gespeichert werden",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG)
-                        .show()
-                }
+        try {
+            client.sendData(device)
+        } catch (e: dev.imanuel.jewels.detection.information.PushException) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    applicationContext,
+                    "Die Daten konnten nicht gespeichert werden",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG)
+                    .show()
             }
         }
     }

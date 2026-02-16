@@ -1,6 +1,7 @@
 package dev.imanuel.jewels.api
 
 import android.content.Context
+import dev.imanuel.jewels.pages.json
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -12,32 +13,43 @@ import io.ktor.client.request.url
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
 import kotlin.concurrent.thread
+import dev.imanuel.jewels.detection.information.Device as DeviceInformation
 
-suspend fun cacheOneTimePasswords(httpClient: HttpClient, context: Context): Pair<Boolean, String> {
+suspend fun checkServer(httpClient: HttpClient): Boolean {
+    val res = httpClient.get {
+        url("healthz")
+    }
+
+    return res.status.isSuccess() && res.bodyAsText() == "OK"
+}
+
+suspend fun getCached(
+    httpClient: HttpClient,
+    context: Context,
+    url: String
+): String {
     val cache = EncryptedJsonDiskCache(context)
-    val cacheKey = "one-time-passwords"
 
     return try {
         val res = httpClient.get {
-            url("one-time-password")
+            url(url)
         }
         val json = res.bodyAsText()
 
         if (res.status.isSuccess()) {
-            cache.put(cacheKey, json)
-            true to json
+            cache.put(url, json)
+            json
         } else {
-            false to ""
+            ""
         }
     } catch (e: Exception) {
-        false to (cache.get(cacheKey) ?: throw e)
+        cache.get(url) ?: throw e
     }
 }
 
 suspend fun getOneTimePasswords(httpClient: HttpClient, context: Context): OneTimePasswords {
-    return Json.decodeFromString(cacheOneTimePasswords(httpClient, context).second)
+    return json.decodeFromString(getCached(httpClient, context, "one-time-password"))
 }
 
 suspend fun deleteOneTimePassword(id: Long, httpClient: HttpClient, context: Context): Boolean {
@@ -49,7 +61,7 @@ suspend fun deleteOneTimePassword(id: Long, httpClient: HttpClient, context: Con
     if (success) {
         thread {
             runBlocking {
-                cacheOneTimePasswords(httpClient, context)
+                getCached(httpClient, context, "one-time-password")
             }
         }
     }
@@ -72,7 +84,7 @@ suspend fun updateOneTimePassword(
     if (success) {
         thread {
             runBlocking {
-                cacheOneTimePasswords(httpClient, context)
+                getCached(httpClient, context, "one-time-password")
             }
         }
     }
@@ -102,7 +114,7 @@ suspend fun createOneTimePassword(
     if (success) {
         thread {
             runBlocking {
-                cacheOneTimePasswords(httpClient, context)
+                getCached(httpClient, context, "one-time-password")
             }
         }
 
@@ -126,7 +138,7 @@ suspend fun shareOneTimePassword(
     if (success) {
         thread {
             runBlocking {
-                cacheOneTimePasswords(httpClient, context)
+                getCached(httpClient, context, "one-time-password")
             }
         }
     }
@@ -141,4 +153,16 @@ suspend fun getUsers(httpClient: HttpClient): List<User> {
     }
 
     return res.body()
+}
+
+suspend fun getEolDevices(httpClient: HttpClient): Map<String, List<Device>> {
+    val res = httpClient.get {
+        url("eol")
+    }
+
+    return res.body()
+}
+
+suspend fun getMyJewels(httpClient: HttpClient, context: Context): List<DeviceInformation> {
+    return json.decodeFromString(getCached(httpClient, context, "my-jewels"))
 }
