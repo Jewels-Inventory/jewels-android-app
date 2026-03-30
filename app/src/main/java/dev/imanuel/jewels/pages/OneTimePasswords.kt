@@ -88,6 +88,8 @@ import dev.imanuel.jewels.utils.rememberQrScanner
 import dev.turingcomplete.kotlinonetimepassword.GoogleAuthenticator
 import io.ktor.client.HttpClient
 import io.ktor.http.Url
+import io.ktor.http.fullPath
+import io.ktor.http.toURI
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -476,7 +478,7 @@ fun OneTimePasswords(
             val url = Url(value)
             val issuer = url.parameters["issuer"]!!
             val secret = url.parameters["secret"]!!
-            val name = url.encodedPath.split("/")[1].split(":")[1]
+            val name = url.toURI().path.split("/")[1].split(":")[1]
             saveOtp(issuer, secret, name)
         },
         onCancel = { },
