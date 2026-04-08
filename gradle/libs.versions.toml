@@ -2,7 +2,7 @@
 accompanistPermissions = "0.37.3"
 adaptiveAndroid = "1.2.0"
 agp = "9.1.0"
-composeMaterial = "1.6.0"
+composeMaterial = "1.6.1"
 coreSplashscreen = "1.2.0"
 kotlin = "2.3.20"
 kotlinxCoroutinesPlayServices = "1.10.2"
