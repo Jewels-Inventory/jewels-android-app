@@ -28,6 +28,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -142,8 +143,11 @@ fun MainComposable(
     collector: InformationCollector = koinInject(),
 ) {
     val navController = rememberNavController()
-    val settings = loadSettings(context)
     val coroutineScope = rememberCoroutineScope()
+
+    val settings = loadSettings(context)
+    val currentBackStack by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStack?.destination?.route
 
     var watch by remember { mutableStateOf<Device?>(null) }
     var handheld by remember { mutableStateOf<Device?>(null) }
@@ -264,7 +268,7 @@ fun MainComposable(
                         onClick = {
                             navController.navigate(NavigationPage.Jewels.name)
                         },
-                        selected = navController.currentDestination?.route == NavigationPage.Jewels.name,
+                        selected = currentRoute == NavigationPage.Jewels.name,
                         label = { Text("Jewels") },
                         icon = {
                             Icon(ImageVector.vectorResource(R.drawable.ic_jewels), "Jewels")
@@ -273,7 +277,7 @@ fun MainComposable(
                         onClick = {
                             navController.navigate(NavigationPage.OneTimePasswords.name)
                         },
-                        selected = navController.currentDestination?.route == NavigationPage.OneTimePasswords.name,
+                        selected = currentRoute == NavigationPage.OneTimePasswords.name,
                         label = { Text("Zwei-Faktor Codes", textAlign = TextAlign.Center) },
                         icon = {
                             Icon(
