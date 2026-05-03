@@ -213,7 +213,7 @@ fun MainComposable(
         }
     }
 
-    val navHost: @Composable () -> Unit = {
+    val navHost = @Composable {
         NavHost(
             navController = navController,
             enterTransition = { EnterTransition.None },
