@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-
 package dev.imanuel.jewels
 
 import android.Manifest
@@ -14,7 +12,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +23,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -47,7 +51,6 @@ import dev.imanuel.jewels.detection.loadSettings
 import dev.imanuel.jewels.pages.Login
 import dev.imanuel.jewels.pages.OneTimePasswords
 import dev.imanuel.jewels.pages.ServerSetup
-import dev.imanuel.jewels.pages.components.NavRail
 import dev.imanuel.jewels.pages.jewels.Jewels
 import dev.imanuel.jewels.pages.json
 import dev.imanuel.jewels.ui.theme.JewelsTheme
@@ -71,7 +74,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
 
         val notificationChannel = NotificationChannel(
@@ -211,7 +213,7 @@ fun MainComposable(
         }
     }
 
-    JewelsTheme {
+    val navHost: @Composable () -> Unit = {
         NavHost(
             navController = navController,
             enterTransition = { EnterTransition.None },
@@ -223,24 +225,15 @@ fun MainComposable(
             },
         ) {
             composable(NavigationPage.Jewels.name) {
-                NavRail(
-                    navController = navController,
-                ) {
-                    Jewels(
-                        watch = watch,
-                        handheld = handheld,
-                        navController = navController,
-                        goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
-                }
+                Jewels(
+                    watch = watch,
+                    handheld = handheld,
+                    goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
             }
             composable(NavigationPage.OneTimePasswords.name) {
-                NavRail(
+                OneTimePasswords(
                     navController = navController,
-                ) {
-                    OneTimePasswords(
-                        navController = navController,
-                        goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
-                }
+                    goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
             }
             composable(NavigationPage.ServerSetup.name) {
                 ServerSetup(goToLogin = {
@@ -253,6 +246,44 @@ fun MainComposable(
                 Login(
                     goToJewels = { navController.navigate(NavigationPage.Jewels.name) },
                     goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
+            }
+        }
+    }
+    val showNavigation = setOf(
+        NavigationPage.Login.name,
+        NavigationPage.ServerSetup.name
+    ).contains(navController.currentDestination ?: "")
+
+    JewelsTheme {
+        if (showNavigation) {
+            navHost()
+        } else {
+            NavigationSuiteScaffold(
+                navigationItems = {
+                    NavigationSuiteItem(
+                        onClick = {
+                            navController.navigate(NavigationPage.Jewels.name)
+                        },
+                        selected = navController.currentDestination?.route == NavigationPage.Jewels.name,
+                        label = { Text("Jewels") },
+                        icon = {
+                            Icon(ImageVector.vectorResource(R.drawable.ic_jewels), "Jewels")
+                        })
+                    NavigationSuiteItem(
+                        onClick = {
+                            navController.navigate(NavigationPage.OneTimePasswords.name)
+                        },
+                        selected = navController.currentDestination?.route == NavigationPage.OneTimePasswords.name,
+                        label = { Text("Zwei-Faktor Codes", textAlign = TextAlign.Center) },
+                        icon = {
+                            Icon(
+                                ImageVector.vectorResource(R.drawable.ic_otp),
+                                "Zwei-Faktor Codes"
+                            )
+                        })
+                }
+            ) {
+                navHost()
             }
         }
     }

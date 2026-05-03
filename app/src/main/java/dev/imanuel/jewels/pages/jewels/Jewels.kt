@@ -36,13 +36,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.google.android.gms.common.util.DeviceProperties
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.api.getMyJewels
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
-import dev.imanuel.jewels.pages.components.BottomNavBar
 import dev.imanuel.jewels.pages.components.TopBarActions
 import dev.imanuel.jewels.pages.format
 import dev.imanuel.jewels.pages.getHandheldType
@@ -58,7 +55,6 @@ fun Jewels(
     httpClient: HttpClient = koinInject(),
     handheld: Device?,
     watch: Device?,
-    navController: NavController,
     goToSetup: () -> Unit
 ) {
     val handheldType = getHandheldType()
@@ -106,11 +102,11 @@ fun Jewels(
                     TopBarActions(goToSetup = goToSetup)
                 })
         },
-        bottomBar = {
-            if (!DeviceProperties.isTablet(context)) {
-                BottomNavBar(navController)
-            }
-        },
+//        bottomBar = {
+//            if (!DeviceProperties.isTablet(context)) {
+//                BottomNavBar(navController)
+//            }
+//        },
     ) { innerPadding ->
         PullToRefreshBox(
             isRefreshing = isLoading,
@@ -129,7 +125,7 @@ fun Jewels(
                         style = MaterialTheme.typography.headlineLarge
                     )
                     Image(
-                        ImageBitmap.imageResource(R.drawable.loading_error),
+                        ImageBitmap.imageResource(R.mipmap.loading_error),
                         contentDescription = "Laden fehlgeschlagen",
                         modifier = Modifier.fillMaxWidth()
                     )

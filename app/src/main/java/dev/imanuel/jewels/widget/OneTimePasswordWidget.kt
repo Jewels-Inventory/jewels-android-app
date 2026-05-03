@@ -15,6 +15,7 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
@@ -101,7 +102,8 @@ class OneTimePasswordWidget : GlanceAppWidget() {
         GlanceTheme {
             Column(
                 modifier = GlanceModifier.fillMaxSize()
-                    .padding(12.dp),
+                    .padding(12.dp)
+                    .clickable({ loadOtps() }),
                 verticalAlignment = Alignment.Top,
                 horizontalAlignment = Alignment.Start
             ) {

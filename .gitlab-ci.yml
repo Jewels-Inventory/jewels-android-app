@@ -33,6 +33,20 @@ stages:
   - deploy-android
   - deploy-wear
 
+lint-debug-app:
+  stage: lint
+  extends:
+    - .build-base
+  script:
+    - ./gradlew -Pci --console=plain lintDebug -PbuildDir=build
+
+lint-release-app:
+  stage: lint
+  extends:
+    - .build-base
+  script:
+    - ./gradlew -Pci --console=plain lintRelease -PbuildDir=build
+
 build-debug-app:
   stage: build
   extends:

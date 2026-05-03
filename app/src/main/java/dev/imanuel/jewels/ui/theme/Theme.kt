@@ -105,13 +105,6 @@ fun JewelsTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
-    }
 
     MaterialTheme(
         colorScheme = colorScheme,

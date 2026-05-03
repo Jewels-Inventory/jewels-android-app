@@ -81,14 +81,12 @@ import dev.imanuel.jewels.api.getUsers
 import dev.imanuel.jewels.api.shareOneTimePassword
 import dev.imanuel.jewels.api.updateOneTimePassword
 import dev.imanuel.jewels.detection.ServerSettings
-import dev.imanuel.jewels.pages.components.BottomNavBar
 import dev.imanuel.jewels.pages.components.TopBarActions
 import dev.imanuel.jewels.utils.insertSortedBy
 import dev.imanuel.jewels.utils.rememberQrScanner
 import dev.turingcomplete.kotlinonetimepassword.GoogleAuthenticator
 import io.ktor.client.HttpClient
 import io.ktor.http.Url
-import io.ktor.http.fullPath
 import io.ktor.http.toURI
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -232,13 +230,12 @@ fun OneTimePasswordItem(
                 val menuButton = createRef()
 
                 if (otp.canEdit) {
-                    Box(
-                        modifier = Modifier
-                            .constrainAs(menuButton) {
-                                top.linkTo(parent.top)
-                                end.linkTo(parent.end)
-                            }
-                            .wrapContentSize(Alignment.TopEnd)) {
+                    Box(modifier = Modifier
+                        .constrainAs(menuButton) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                        }
+                        .wrapContentSize(Alignment.TopEnd)) {
                         IconButton(
                             onClick = {
                                 menuExpanded = true
@@ -351,8 +348,8 @@ fun OneTimePasswordItem(
                     )
                     TextField(
                         value = editAccountName, onValueChange = { newName ->
-                            editAccountName = newName
-                        }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth()
+                        editAccountName = newName
+                    }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth()
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
@@ -454,16 +451,13 @@ fun OneTimePasswords(
             try {
                 val result = createOneTimePassword(name, issuer, secret, httpClient, context)
                 val otpComparator =
-                    compareBy<OneTimePassword>({ it.accountIssuer })
-                        .thenBy({ it.accountName })
+                    compareBy<OneTimePassword>({ it.accountIssuer }).thenBy({ it.accountName })
                         .thenBy { it.id }
                 myOneTimePasswords = myOneTimePasswords.insertSortedBy(result, otpComparator)
                 Toast.makeText(context, "$issuer wurde hinzugefügt", Toast.LENGTH_SHORT).show()
             } catch (ex: Exception) {
                 Toast.makeText(
-                    context,
-                    "$issuer konnte leider nicht hinzugefügt werden",
-                    Toast.LENGTH_LONG
+                    context, "$issuer konnte leider nicht hinzugefügt werden", Toast.LENGTH_LONG
                 ).show()
             }
             try {
@@ -526,47 +520,42 @@ fun OneTimePasswords(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp),
-        topBar = {
-            TopAppBar(title = {
-                Text("Zwei-Faktor Codes")
-            }, scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(), actions = {
-                TopBarActions(goToSetup = goToSetup)
-            })
-        }, bottomBar = {
-            if (!isTablet(context)) {
-                BottomNavBar(navController)
+        contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp), topBar = {
+        TopAppBar(title = {
+            Text("Zwei-Faktor Codes")
+        }, scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(), actions = {
+            TopBarActions(goToSetup = goToSetup)
+        })
+//        }, bottomBar = {
+//            if (!isTablet(context)) {
+//                BottomNavBar(navController)
+//            }
+    }, floatingActionButton = {
+        if (!isLoading && !loadingFailed && reachability.value == Reachability.Reachable) {
+            FloatingActionButton(onClick = {
+                startScan()
+            }) {
+                Icon(ImageVector.vectorResource(R.drawable.ic_scan_code), "Neuen Code scannen")
             }
-        }, floatingActionButton = {
-            if (!isLoading && !loadingFailed && reachability.value == Reachability.Reachable) {
-                FloatingActionButton(onClick = {
-                    startScan()
-                }) {
-                    Icon(ImageVector.vectorResource(R.drawable.ic_scan_code), "Neuen Code scannen")
-                }
-            }
-        }, floatingActionButtonPosition = FabPosition.End
+        }
+    }, floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
         PullToRefreshBox(
-            isLoading,
-            onRefresh = {
+            isLoading, onRefresh = {
                 loadOneTimePasswords()
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
             if (loadingFailed) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        "Laden fehlgeschlagen",
-                        style = MaterialTheme.typography.headlineLarge
+                        "Laden fehlgeschlagen", style = MaterialTheme.typography.headlineLarge
                     )
                     Image(
-                        ImageBitmap.imageResource(R.drawable.loading_error),
+                        ImageBitmap.imageResource(R.mipmap.loading_error),
                         contentDescription = "Laden fehlgeschlagen",
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -591,9 +580,7 @@ fun OneTimePasswords(
                         }
                     }
                     items(
-                        items = myOneTimePasswords,
-                        key = { otp -> otp.id }
-                    ) { otp ->
+                        items = myOneTimePasswords, key = { otp -> otp.id }) { otp ->
                         OneTimePasswordItem(
                             otp = SimpleOneTimePassword.fromOneTimePassword(otp)
                                 .copy(canEdit = reachability.value == Reachability.Reachable),
@@ -627,9 +614,7 @@ fun OneTimePasswords(
                             }
                         }
                         items(
-                            items = otp.value,
-                            key = { otp -> otp.id }
-                        ) { otp ->
+                            items = otp.value, key = { otp -> otp.id }) { otp ->
                             OneTimePasswordItem(
                                 SimpleOneTimePassword.fromSharedOneTimePassword(otp),
                             )

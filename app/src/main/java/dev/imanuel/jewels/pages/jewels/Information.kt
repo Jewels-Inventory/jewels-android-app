@@ -32,7 +32,6 @@ import androidx.navigation.NavController
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
-import dev.imanuel.jewels.pages.components.BottomNavBar
 import dev.imanuel.jewels.pages.components.TopBarActions
 import dev.imanuel.jewels.pages.getHandheldType
 import dev.imanuel.jewels.pages.uploadData
@@ -119,64 +118,5 @@ fun Tabs(state: PagerState, device: Device?) {
             },
             enabled = device != null,
         )
-    }
-}
-
-@Composable
-fun Information(
-    context: Context = koinInject(),
-    device: Device,
-    navController: NavController,
-    hasWatch: Boolean,
-    isTablet: Boolean,
-    goToSetup: () -> Unit
-) {
-    val tabState = rememberPagerState(initialPage = SelectedTab.Hardware.ordinal) {
-        SelectedTab.entries.size
-    }
-    val handheldType = getHandheldType()
-
-    Scaffold(
-        contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp),
-        topBar = {
-            Column {
-                AppBar(device, goToSetup = goToSetup)
-                Tabs(tabState, device)
-            }
-        },
-        bottomBar = {
-            if (!isTablet) {
-                BottomNavBar(navController)
-            }
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                {
-                    Text("Infos hochladen")
-                },
-                { Icon(ImageVector.vectorResource(R.drawable.ic_upload), "Infos hochladen") },
-                { uploadData(handheldType, device, context) })
-        },
-        floatingActionButtonPosition = FabPosition.End
-    ) { innerPadding ->
-        HorizontalPager(
-            state = tabState, modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            when (SelectedTab.entries[it]) {
-                SelectedTab.Hardware -> Column(modifier = Modifier.fillMaxSize()) {
-                    HardwareInformation(device)
-                }
-
-                SelectedTab.Storage -> Column(modifier = Modifier.fillMaxSize()) {
-                    StorageInformation(device)
-                }
-
-                SelectedTab.Software -> Column(modifier = Modifier.fillMaxSize()) {
-                    SoftwareInformation(device)
-                }
-            }
-        }
     }
 }

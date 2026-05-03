@@ -36,12 +36,12 @@ fun computeVersionCode(): Int {
 
 android {
     namespace = "dev.imanuel.jewels"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
         minSdk = 30
-        targetSdk = 36
+        targetSdk = 37
         versionCode = computeVersionCode()
         versionName = "1.0"
 
@@ -113,6 +113,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.material3.material3)
+    implementation(libs.androidx.compose.material3.material3.adaptive.navigation.suite)
 
     implementation(libs.androidx.navigation.compose)
 
