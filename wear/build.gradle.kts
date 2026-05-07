@@ -35,14 +35,14 @@ fun computeVersionCode(): Int {
 
 android {
     namespace = "dev.imanuel.jewels"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 37
         versionCode = computeVersionCode()
-        versionName = "1.0"
+        versionName =  computeVersionName()
 
         vectorDrawables {
             useSupportLibrary = true
