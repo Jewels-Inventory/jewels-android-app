@@ -236,7 +236,6 @@ fun MainComposable(
             }
             composable(NavigationPage.OneTimePasswords.name) {
                 OneTimePasswords(
-                    navController = navController,
                     goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
             }
             composable(NavigationPage.ServerSetup.name) {

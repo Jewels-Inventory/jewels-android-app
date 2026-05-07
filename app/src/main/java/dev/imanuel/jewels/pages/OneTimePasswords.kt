@@ -66,9 +66,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.google.android.gms.common.util.DeviceProperties.isTablet
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.api.OneTimePassword
 import dev.imanuel.jewels.api.SharedOneTimePassword
@@ -429,7 +427,6 @@ fun OneTimePasswordItem(
 fun OneTimePasswords(
     context: Context = koinInject(),
     httpClient: HttpClient = koinInject(),
-    navController: NavController,
     goToSetup: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -526,10 +523,6 @@ fun OneTimePasswords(
         }, scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(), actions = {
             TopBarActions(goToSetup = goToSetup)
         })
-//        }, bottomBar = {
-//            if (!isTablet(context)) {
-//                BottomNavBar(navController)
-//            }
     }, floatingActionButton = {
         if (!isLoading && !loadingFailed && reachability.value == Reachability.Reachable) {
             FloatingActionButton(onClick = {
