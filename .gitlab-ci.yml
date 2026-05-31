@@ -58,7 +58,7 @@ read-secure-files:
   stage: lint
   script:
     - glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_FQDN --api-protocol $CI_SERVER_PROTOCOL
-    - glab -R $CI_PROJECT_PATH securefile download --all --output-dir="$CI_PROJECT_DIR/.secure_files"
+    - glab -R $CI_PROJECT_PATH securefile download --all --output-dir=".secure_files"
   artifacts:
     paths:
       - $CI_PROJECT_DIR/.secure_files
