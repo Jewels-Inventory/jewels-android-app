@@ -92,6 +92,7 @@ deploy-wear-app:
     - .deploy-base
   needs:
     - read-secure-files
+    - deploy-android-app
   variables:
     TRACK: wear
   stage: deploy-wear
