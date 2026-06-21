@@ -35,7 +35,7 @@ fun computeVersionCode(): Int {
 
 android {
     namespace = "dev.imanuel.jewels"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.imanuel.jewels"
