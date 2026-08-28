@@ -22,7 +22,7 @@ constraintlayoutCompose = "1.1.2"
 coil = "3.6.0"
 onetimepassword = "3.0.0"
 playServicesBarcode = "16.1.0"
-glance = "1.1.1"
+glance = "1.2.0"
 tink = "1.23.0"
 
 [libraries]
