@@ -23,7 +23,7 @@ coil = "3.6.3"
 onetimepassword = "3.0.0"
 playServicesBarcode = "16.1.0"
 glance = "1.2.0"
-tink = "1.23.0"
+tink = "1.24.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
