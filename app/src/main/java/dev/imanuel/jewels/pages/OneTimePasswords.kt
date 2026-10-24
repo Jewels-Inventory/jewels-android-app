@@ -66,6 +66,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.glance.appwidget.updateAll
 import coil3.compose.AsyncImage
 import dev.imanuel.jewels.R
 import dev.imanuel.jewels.api.OneTimePassword
@@ -82,6 +83,7 @@ import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.pages.components.TopBarActions
 import dev.imanuel.jewels.utils.insertSortedBy
 import dev.imanuel.jewels.utils.rememberQrScanner
+import dev.imanuel.jewels.widget.OneTimePasswordWidget
 import dev.turingcomplete.kotlinonetimepassword.GoogleAuthenticator
 import io.ktor.client.HttpClient
 import io.ktor.http.Url
@@ -94,6 +96,11 @@ import org.koin.compose.koinInject
 fun generateOtp(secretKey: String): String {
     return GoogleAuthenticator(secretKey.encodeToByteArray()).generate()
 }
+
+suspend fun Context.triggerWidgetUpdate() {
+    OneTimePasswordWidget().updateAll(this)
+}
+
 
 data class CurrentState(val code: String, val secondsRemaining: Int)
 
@@ -174,6 +181,7 @@ fun OneTimePasswordItem(
                     context, "${otp.accountIssuer} konnte nicht umbenannt werden", Toast.LENGTH_LONG
                 ).show()
             }
+            context.triggerWidgetUpdate()
         }
     }
     val deleteOtp = {
@@ -187,6 +195,7 @@ fun OneTimePasswordItem(
                     context, "${otp.accountIssuer} konnte nicht gelöscht werden", Toast.LENGTH_LONG
                 ).show()
             }
+            context.triggerWidgetUpdate()
         }
     }
 
@@ -228,12 +237,13 @@ fun OneTimePasswordItem(
                 val menuButton = createRef()
 
                 if (otp.canEdit) {
-                    Box(modifier = Modifier
-                        .constrainAs(menuButton) {
-                            top.linkTo(parent.top)
-                            end.linkTo(parent.end)
-                        }
-                        .wrapContentSize(Alignment.TopEnd)) {
+                    Box(
+                        modifier = Modifier
+                            .constrainAs(menuButton) {
+                                top.linkTo(parent.top)
+                                end.linkTo(parent.end)
+                            }
+                            .wrapContentSize(Alignment.TopEnd)) {
                         IconButton(
                             onClick = {
                                 menuExpanded = true
@@ -346,8 +356,8 @@ fun OneTimePasswordItem(
                     )
                     TextField(
                         value = editAccountName, onValueChange = { newName ->
-                        editAccountName = newName
-                    }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth()
+                            editAccountName = newName
+                        }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth()
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
@@ -461,6 +471,7 @@ fun OneTimePasswords(
                 getOneTimePasswords(httpClient, context)
             } catch (ex: Exception) {
             }
+            context.triggerWidgetUpdate()
         }
     }
 
@@ -497,6 +508,7 @@ fun OneTimePasswords(
             } finally {
                 isLoading = false
             }
+            context.triggerWidgetUpdate()
         }
     }
     val loadUsers = {
@@ -518,20 +530,20 @@ fun OneTimePasswords(
 
     Scaffold(
         contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp), topBar = {
-        TopAppBar(title = {
-            Text("Zwei-Faktor Codes")
-        }, scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(), actions = {
-            TopBarActions(goToSetup = goToSetup)
-        })
-    }, floatingActionButton = {
-        if (!isLoading && !loadingFailed && reachability.value == Reachability.Reachable) {
-            FloatingActionButton(onClick = {
-                startScan()
-            }) {
-                Icon(ImageVector.vectorResource(R.drawable.ic_scan_code), "Neuen Code scannen")
+            TopAppBar(title = {
+                Text("Zwei-Faktor Codes")
+            }, scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(), actions = {
+                TopBarActions(goToSetup = goToSetup)
+            })
+        }, floatingActionButton = {
+            if (!isLoading && !loadingFailed && reachability.value == Reachability.Reachable) {
+                FloatingActionButton(onClick = {
+                    startScan()
+                }) {
+                    Icon(ImageVector.vectorResource(R.drawable.ic_scan_code), "Neuen Code scannen")
+                }
             }
-        }
-    }, floatingActionButtonPosition = FabPosition.End
+        }, floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
         PullToRefreshBox(
             isLoading, onRefresh = {
