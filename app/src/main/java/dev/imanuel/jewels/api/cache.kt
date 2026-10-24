@@ -2,9 +2,9 @@ package dev.imanuel.jewels.api
 
 import android.content.Context
 import com.google.crypto.tink.Aead
-import com.google.crypto.tink.ConfigurationV0
 import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.aead.AeadKeyTemplates
+import com.google.crypto.tink.config.TinkConfig2026
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import java.io.File
 import java.security.MessageDigest
@@ -29,7 +29,7 @@ class EncryptedJsonDiskCache(
             .build()
             .keysetHandle
 
-        aead = keysetHandle.getPrimitive(ConfigurationV0.get(), Aead::class.java)
+        aead = keysetHandle.getPrimitive(TinkConfig2026.get(), Aead::class.java)
     }
 
     fun put(cacheKey: String, json: String) {
