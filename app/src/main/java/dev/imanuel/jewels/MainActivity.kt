@@ -145,7 +145,7 @@ fun MainComposable(
     val navController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
 
-    val settings = loadSettings(context)
+    val settings = remember { loadSettings(context) }
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStack?.destination?.route
 
@@ -247,15 +247,19 @@ fun MainComposable(
             }
             composable(NavigationPage.Login.name) {
                 Login(
-                    goToJewels = { navController.navigate(NavigationPage.Jewels.name) },
-                    goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
+                    goToJewels = {
+                        navController.navigate(NavigationPage.Jewels.name)
+                    },
+                    goToSetup = {
+                        navController.navigate(NavigationPage.ServerSetup.name)
+                    })
             }
         }
     }
     val showNavigation = setOf(
         NavigationPage.Login.name,
         NavigationPage.ServerSetup.name
-    ).contains(navController.currentDestination ?: "")
+    ).contains(currentRoute)
 
     JewelsTheme {
         if (showNavigation) {
