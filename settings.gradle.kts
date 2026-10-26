@@ -23,4 +23,4 @@ dependencyResolutionManagement {
 rootProject.name = "Jewels"
 include(":app")
 include(":wear")
-include(":detection")
+include(":shared")

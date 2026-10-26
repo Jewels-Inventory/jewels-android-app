@@ -17,7 +17,8 @@ fun rememberQrScanner(
     onError: (Exception) -> Unit = {}
 ): () -> Unit {
     val scanner = remember {
-        val options = GmsBarcodeScannerOptions.Builder()
+        val options = GmsBarcodeScannerOptions
+            .Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
             .build()
 
@@ -26,7 +27,8 @@ fun rememberQrScanner(
 
     return remember(scanner, context) {
         {
-            scanner.startScan()
+            scanner
+                .startScan()
                 .addOnSuccessListener { barcode ->
                     val value = barcode.rawValue
                     if (value.isNullOrBlank()) {
@@ -48,8 +50,13 @@ inline fun <reified T> rememberJsonQrScanner(
     noinline onCancel: () -> Unit = {},
     noinline onError: (Exception) -> Unit = {}
 ): () -> Unit {
-    return rememberQrScanner(context, { value ->
-        val result = decodeFromString<T>(value)
-        onResult(result)
-    }, onCancel, onError)
+    return rememberQrScanner(
+        context,
+        { value ->
+            val result = decodeFromString<T>(value)
+            onResult(result)
+        },
+        onCancel,
+        onError
+    )
 }

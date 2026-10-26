@@ -8,15 +8,14 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
-import dev.imanuel.jewels.detection.ServerSettings
-import dev.imanuel.jewels.detection.saveSettings
+import dev.imanuel.jewels.shared.ServerSettings
+import dev.imanuel.jewels.shared.saveSettings
 import kotlinx.serialization.json.Json
 
 class SettingsViewModel(@SuppressLint("StaticFieldLeak") private val context: Context) :
     ViewModel(),
     DataClient.OnDataChangedListener {
     private var _settings: MutableState<ServerSettings?> = mutableStateOf(null)
-
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents
@@ -26,7 +25,7 @@ class SettingsViewModel(@SuppressLint("StaticFieldLeak") private val context: Co
                 if (data != null) {
                     val sendSettings = Json.decodeFromString<ServerSettings>(data.decodeToString())
                     _settings.value = sendSettings
-                    saveSettings(sendSettings, context)
+                    context.saveSettings(sendSettings)
                 }
             }
     }

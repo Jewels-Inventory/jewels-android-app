@@ -103,8 +103,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":detection"))
 
+    implementation(project(":shared"))
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.androidx.foundation)

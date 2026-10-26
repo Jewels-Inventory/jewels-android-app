@@ -7,11 +7,10 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import dev.imanuel.jewels.api.getEolDevices
-import io.ktor.client.HttpClient
+import dev.imanuel.jewels.shared.api.ApiClient
 
 class EolCheckWorker(
-    private val client: HttpClient,
+    private val apiClient: ApiClient,
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
@@ -52,24 +51,24 @@ class EolCheckWorker(
     }
 
     private suspend fun checkEolDevices() {
-        val eolDevices = getEolDevices(client)
+        val eolDevices = apiClient.getEolDevices()
         for ((who, devices) in eolDevices) {
-            for (device in devices) {
-                if (notifiedBefore(device.id)) continue
+            for ((id, _, _, model, manufacturer) in devices) {
+                if (notifiedBefore(id)) continue
                 if (who == "me") {
                     showNotification(
-                        device.id.hashCode(),
+                        id.hashCode(),
                         "Du brauchst bald was neues",
-                        "Dein ${device.manufacturer} ${device.model} ist bald aus dem Support raus"
+                        "Dein $manufacturer $model ist bald aus dem Support raus"
                     )
                 } else {
                     showNotification(
-                        device.id.hashCode(),
+                        id.hashCode(),
                         "$who braucht bald was neues",
-                        "Das ${device.manufacturer} ${device.model} von $who ist bald aus dem Support raus"
+                        "Das $manufacturer $model von $who ist bald aus dem Support raus"
                     )
                 }
-                markDeviceNotified(device.id)
+                markDeviceNotified(id)
             }
         }
     }

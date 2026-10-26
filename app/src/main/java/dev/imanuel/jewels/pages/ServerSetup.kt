@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -18,21 +17,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import dev.imanuel.jewels.detection.ServerSettings
-import dev.imanuel.jewels.detection.saveSettings
+import androidx.navigation.NavController
+import dev.imanuel.jewels.NavigationPage
+import dev.imanuel.jewels.shared.ServerSettings
+import dev.imanuel.jewels.shared.saveSettings
 import dev.imanuel.jewels.utils.rememberJsonQrScanner
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ServerSetup(
-    goToLogin: () -> Unit
+    navController: NavController
 ) {
     val context = LocalContext.current
     val startScan = rememberJsonQrScanner<ServerSettings>(
         onResult = { settings ->
-            saveSettings(settings, context)
-            goToLogin()
+            context.saveSettings(settings)
+            navController.navigate(NavigationPage.Login.name)
         },
         onCancel = { },
         onError = {

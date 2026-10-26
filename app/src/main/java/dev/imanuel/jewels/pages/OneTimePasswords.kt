@@ -48,7 +48,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,77 +59,36 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.glance.appwidget.updateAll
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import dev.imanuel.jewels.R
-import dev.imanuel.jewels.api.OneTimePassword
-import dev.imanuel.jewels.api.SharedOneTimePassword
-import dev.imanuel.jewels.api.SimpleOneTimePassword
-import dev.imanuel.jewels.api.User
-import dev.imanuel.jewels.api.createOneTimePassword
-import dev.imanuel.jewels.api.deleteOneTimePassword
-import dev.imanuel.jewels.api.getOneTimePasswords
-import dev.imanuel.jewels.api.getUsers
-import dev.imanuel.jewels.api.shareOneTimePassword
-import dev.imanuel.jewels.api.updateOneTimePassword
-import dev.imanuel.jewels.detection.ServerSettings
+import dev.imanuel.jewels.pages.components.LoadingFailed
 import dev.imanuel.jewels.pages.components.TopBarActions
+import dev.imanuel.jewels.shared.ServerSettings
+import dev.imanuel.jewels.shared.api.ApiClient
+import dev.imanuel.jewels.shared.api.OneTimePassword
+import dev.imanuel.jewels.shared.api.SharedOneTimePassword
+import dev.imanuel.jewels.shared.api.SimpleOneTimePassword
+import dev.imanuel.jewels.shared.api.User
+import dev.imanuel.jewels.shared.otp.rememberTotpState
 import dev.imanuel.jewels.utils.insertSortedBy
 import dev.imanuel.jewels.utils.rememberQrScanner
 import dev.imanuel.jewels.widget.OneTimePasswordWidget
-import dev.turingcomplete.kotlinonetimepassword.GoogleAuthenticator
-import io.ktor.client.HttpClient
 import io.ktor.http.Url
 import io.ktor.http.toURI
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-fun generateOtp(secretKey: String): String {
-    return GoogleAuthenticator(secretKey.encodeToByteArray()).generate()
-}
-
 suspend fun Context.triggerWidgetUpdate() {
     OneTimePasswordWidget().updateAll(this)
-}
-
-
-data class CurrentState(val code: String, val secondsRemaining: Int)
-
-@Composable
-fun rememberTotpState(
-    secretKey: String, periodSeconds: Int = 30
-): State<CurrentState> {
-    val state = remember { mutableStateOf(CurrentState("", periodSeconds)) }
-
-    LaunchedEffect(secretKey, periodSeconds) {
-        var lastStep: Long = -1L
-
-        while (isActive) {
-            val nowSec = System.currentTimeMillis() / 1000L
-            val step = nowSec / periodSeconds
-            val secondsRemaining = (periodSeconds - (nowSec % periodSeconds)).toInt()
-
-            if (step != lastStep) {
-                lastStep = step
-                val newCode = generateOtp(secretKey)
-                state.value = CurrentState(newCode, secondsRemaining)
-            } else {
-                state.value = CurrentState(state.value.code, secondsRemaining)
-            }
-
-            delay(1_000)
-        }
-    }
-
-    return state
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -141,59 +99,74 @@ fun OneTimePasswordItem(
     onShareSuccess: (List<User>) -> Unit = {},
     onUpdateSuccess: (String) -> Unit = {},
     onDeleteSuccess: () -> Unit = {},
-    context: Context = koinInject(),
-    httpClient: HttpClient = koinInject(),
+    apiClient: ApiClient = koinInject(),
     settings: ServerSettings = koinInject()
 ) {
     val clipboard = LocalClipboard.current
 
-    val totp by rememberTotpState(otp.secretKey, periodSeconds = 30)
+    val totp by rememberTotpState(otp.secretKey)
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     var menuExpanded by remember { mutableStateOf(false) }
     var shareOpen by remember { mutableStateOf(false) }
     var editOpen by remember { mutableStateOf(false) }
     var deleteOpen by remember { mutableStateOf(false) }
     var editAccountName by remember { mutableStateOf(otp.accountName) }
-    var sharedWith by remember { mutableStateOf<List<Long>>(otp.sharedWith.map { it.id }) }
+    var sharedWith by remember { mutableStateOf(otp.sharedWith.map { it.id }) }
 
     val shareOtp = {
         coroutineScope.launch {
-            if (shareOneTimePassword(otp.id, sharedWith, httpClient, context)) {
-                Toast.makeText(context, "${otp.accountIssuer} wurde geteilt", Toast.LENGTH_SHORT)
+            if (apiClient.shareOneTimePassword(otp.id, sharedWith)) {
+                Toast
+                    .makeText(context, "${otp.accountIssuer} wurde geteilt", Toast.LENGTH_SHORT)
                     .show()
                 onShareSuccess(sharedWith.map { id -> users.find { it.id == id }!! })
             } else {
-                Toast.makeText(
-                    context, "${otp.accountIssuer} konnte nicht geteilt werden", Toast.LENGTH_LONG
-                ).show()
+                Toast
+                    .makeText(
+                        context,
+                        "${otp.accountIssuer} konnte nicht geteilt werden",
+                        Toast.LENGTH_LONG
+                    )
+                    .show()
             }
         }
     }
     val updateOtp = {
         coroutineScope.launch {
-            if (updateOneTimePassword(otp.id, editAccountName, httpClient, context)) {
-                Toast.makeText(context, "${otp.accountIssuer} wurde umbenannt", Toast.LENGTH_SHORT)
+            if (apiClient.updateOneTimePassword(otp.id, editAccountName)) {
+                Toast
+                    .makeText(context, "${otp.accountIssuer} wurde umbenannt", Toast.LENGTH_SHORT)
                     .show()
                 onUpdateSuccess(editAccountName)
             } else {
-                Toast.makeText(
-                    context, "${otp.accountIssuer} konnte nicht umbenannt werden", Toast.LENGTH_LONG
-                ).show()
+                Toast
+                    .makeText(
+                        context,
+                        "${otp.accountIssuer} konnte nicht umbenannt werden",
+                        Toast.LENGTH_LONG
+                    )
+                    .show()
             }
             context.triggerWidgetUpdate()
         }
     }
     val deleteOtp = {
         coroutineScope.launch {
-            if (deleteOneTimePassword(otp.id, httpClient, context)) {
-                Toast.makeText(context, "${otp.accountIssuer} wurde gelöscht", Toast.LENGTH_SHORT)
+            if (apiClient.deleteOneTimePassword(otp.id)) {
+                Toast
+                    .makeText(context, "${otp.accountIssuer} wurde gelöscht", Toast.LENGTH_SHORT)
                     .show()
                 onDeleteSuccess()
             } else {
-                Toast.makeText(
-                    context, "${otp.accountIssuer} konnte nicht gelöscht werden", Toast.LENGTH_LONG
-                ).show()
+                Toast
+                    .makeText(
+                        context,
+                        "${otp.accountIssuer} konnte nicht gelöscht werden",
+                        Toast.LENGTH_LONG
+                    )
+                    .show()
             }
             context.triggerWidgetUpdate()
         }
@@ -205,21 +178,26 @@ fun OneTimePasswordItem(
                 clipboard.setClipEntry(
                     ClipEntry(
                         ClipData.newPlainText(
-                            otp.accountIssuer, totp.code
+                            otp.accountIssuer,
+                            totp.code
                         )
                     )
                 )
             }
-        }, modifier = Modifier
+        },
+        modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             val targetProgress = totp.secondsRemaining.toFloat() / 30f
             val animatedProgress by animateFloatAsState(
-                targetValue = targetProgress, animationSpec = tween(
-                    durationMillis = 1_000, easing = LinearEasing
-                ), label = "totpProgress"
+                targetValue = targetProgress,
+                animationSpec = tween(
+                    durationMillis = 1_000,
+                    easing = LinearEasing
+                ),
+                label = "totpProgress"
             )
             LinearProgressIndicator(
                 progress = { animatedProgress },
@@ -227,23 +205,15 @@ fun OneTimePasswordItem(
                     .fillMaxWidth()
                     .height(4.dp),
             )
-            ConstraintLayout(
+            Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val icon = createRef()
-                val issuer = createRef()
-                val name = createRef()
-                val code = createRef()
-                val menuButton = createRef()
-
                 if (otp.canEdit) {
                     Box(
                         modifier = Modifier
-                            .constrainAs(menuButton) {
-                                top.linkTo(parent.top)
-                                end.linkTo(parent.end)
-                            }
-                            .wrapContentSize(Alignment.TopEnd)) {
+                            .align(Alignment.TopEnd)
+                            .wrapContentSize(Alignment.TopEnd)
+                    ) {
                         IconButton(
                             onClick = {
                                 menuExpanded = true
@@ -258,63 +228,64 @@ fun OneTimePasswordItem(
                             expanded = menuExpanded,
                             onDismissRequest = { menuExpanded = false },
                         ) {
-                            DropdownMenuItem(text = { Text("Teilen") }, onClick = {
-                                menuExpanded = false
-                                shareOpen = true
-                            })
-                            DropdownMenuItem(text = { Text("Bearbeiten") }, onClick = {
-                                menuExpanded = false
-                                editOpen = true
-                            })
-                            DropdownMenuItem(text = { Text("Löschen") }, onClick = {
-                                menuExpanded = false
-                                deleteOpen = true
-                            })
+                            DropdownMenuItem(
+                                text = { Text("Teilen") },
+                                onClick = {
+                                    menuExpanded = false
+                                    shareOpen = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Bearbeiten") },
+                                onClick = {
+                                    menuExpanded = false
+                                    editOpen = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Löschen") },
+                                onClick = {
+                                    menuExpanded = false
+                                    deleteOpen = true
+                                }
+                            )
                         }
                     }
                 }
-                AsyncImage(
-                    model = "${settings.host}/${otp.iconSource}",
-                    contentDescription = otp.accountIssuer,
-                    modifier = Modifier
-                        .constrainAs(icon) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                        }
-                        .height(92.dp)
-                        .width(92.dp)
-                        .padding(16.dp))
-                Text(
-                    text = otp.accountIssuer,
-                    modifier = Modifier
-                        .constrainAs(issuer) {
-                            top.linkTo(parent.top)
-                            start.linkTo(icon.end)
-                        }
-                        .padding(top = 8.dp),
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Start)
-                Text(
-                    text = totp.code,
-                    modifier = Modifier.constrainAs(code) {
-                        top.linkTo(issuer.bottom)
-                        start.linkTo(icon.end)
-                    },
-                    style = MaterialTheme.typography.headlineSmall.copy(fontFamily = FontFamily.Monospace),
-                    textAlign = TextAlign.Start
-                )
-                Text(
-                    text = otp.accountName,
-                    modifier = Modifier
-                        .constrainAs(name) {
-                            top.linkTo(code.bottom)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(icon.end)
-                        }
-                        .padding(bottom = 8.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Start)
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    AsyncImage(
+                        model = "${settings.host}/${otp.iconSource}",
+                        contentDescription = otp.accountIssuer,
+                        modifier = Modifier
+                            .height(92.dp)
+                            .width(92.dp)
+                            .padding(16.dp)
+                    )
+                    Column(
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = otp.accountIssuer,
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.padding(end = 32.dp),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = totp.code,
+                            style = MaterialTheme.typography.headlineSmall.copy(fontFamily = FontFamily.Monospace),
+                            textAlign = TextAlign.Start
+                        )
+                        Text(
+                            text = otp.accountName,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
             }
         }
         if (deleteOpen) {
@@ -327,7 +298,8 @@ fun OneTimePasswordItem(
                             deleteOtp()
                             deleteOpen = false
                         },
-                        colors = ButtonDefaults.textButtonColors()
+                        colors = ButtonDefaults
+                            .textButtonColors()
                             .copy(contentColor = MaterialTheme.colorScheme.error)
                     ) {
                         Text("Löschen")
@@ -355,21 +327,28 @@ fun OneTimePasswordItem(
                         style = MaterialTheme.typography.titleLarge
                     )
                     TextField(
-                        value = editAccountName, onValueChange = { newName ->
+                        value = editAccountName,
+                        onValueChange = { newName ->
                             editAccountName = newName
-                        }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth()
+                        },
+                        label = { Text("Name") },
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        OutlinedButton(onClick = { editOpen = false }) {
+                        OutlinedButton(
+                            onClick = { editOpen = false }
+                        ) {
                             Text("Verwerfen")
                         }
-                        Button(onClick = {
-                            updateOtp()
-                            editOpen = false
-                        }) {
+                        Button(
+                            onClick = {
+                                updateOtp()
+                                editOpen = false
+                            }
+                        ) {
                             Text("Speichern")
                         }
                     }
@@ -393,22 +372,22 @@ fun OneTimePasswordItem(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        for (user in users) {
+                        for ((id, name) in users) {
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Checkbox(
-                                    checked = sharedWith.contains(user.id),
+                                    checked = sharedWith.contains(id),
                                     onCheckedChange = { isChecked ->
                                         if (isChecked) {
-                                            sharedWith += user.id
+                                            sharedWith += id
                                         } else {
-                                            sharedWith -= user.id
+                                            sharedWith -= id
                                         }
                                     },
                                 )
-                                Text(user.name)
+                                Text(name)
                             }
                         }
                     }
@@ -416,13 +395,17 @@ fun OneTimePasswordItem(
                         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        OutlinedButton(onClick = { shareOpen = false }) {
+                        OutlinedButton(
+                            onClick = { shareOpen = false }
+                        ) {
                             Text("Verwerfen")
                         }
-                        Button(onClick = {
-                            shareOtp()
-                            shareOpen = false
-                        }) {
+                        Button(
+                            onClick = {
+                                shareOtp()
+                                shareOpen = false
+                            }
+                        ) {
                             Text("Teilen")
                         }
                     }
@@ -432,18 +415,17 @@ fun OneTimePasswordItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OneTimePasswords(
-    context: Context = koinInject(),
-    httpClient: HttpClient = koinInject(),
-    goToSetup: () -> Unit
+    navController: NavController,
+    apiClient: ApiClient = koinInject()
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val reachability = rememberReachability()
 
-    var isLoading by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(true) }
     var loadingFailed by remember { mutableStateOf(false) }
     var myOneTimePasswords by remember { mutableStateOf<List<OneTimePassword>>(emptyList()) }
     var sharedOneTimePasswords by remember {
@@ -456,19 +438,25 @@ fun OneTimePasswords(
     val saveOtp = { issuer: String, secret: String, name: String ->
         coroutineScope.launch {
             try {
-                val result = createOneTimePassword(name, issuer, secret, httpClient, context)
-                val otpComparator =
-                    compareBy<OneTimePassword>({ it.accountIssuer }).thenBy({ it.accountName })
-                        .thenBy { it.id }
+                val result = apiClient.createOneTimePassword(name, issuer, secret)
+                val otpComparator = compareBy<OneTimePassword> { it.accountIssuer }
+                    .thenBy { it.accountName }
+                    .thenBy { it.id }
                 myOneTimePasswords = myOneTimePasswords.insertSortedBy(result, otpComparator)
-                Toast.makeText(context, "$issuer wurde hinzugefügt", Toast.LENGTH_SHORT).show()
+                Toast
+                    .makeText(context, "$issuer wurde hinzugefügt", Toast.LENGTH_SHORT)
+                    .show()
             } catch (ex: Exception) {
-                Toast.makeText(
-                    context, "$issuer konnte leider nicht hinzugefügt werden", Toast.LENGTH_LONG
-                ).show()
+                Toast
+                    .makeText(
+                        context,
+                        "$issuer konnte leider nicht hinzugefügt werden",
+                        Toast.LENGTH_LONG
+                    )
+                    .show()
             }
             try {
-                getOneTimePasswords(httpClient, context)
+                apiClient.getOneTimePasswords()
             } catch (ex: Exception) {
             }
             context.triggerWidgetUpdate()
@@ -485,16 +473,17 @@ fun OneTimePasswords(
         },
         onCancel = { },
         onError = {
-            Toast.makeText(context, "QR Code konnte nicht gelesen werden", Toast.LENGTH_SHORT)
+            Toast
+                .makeText(context, "QR Code konnte nicht gelesen werden", Toast.LENGTH_SHORT)
                 .show()
         },
     )
 
-    val loadOneTimePasswords = {
-        coroutineScope.launch {
-            isLoading = true
+    LaunchedEffect(isLoading) {
+        if (isLoading) {
             try {
-                val otps = getOneTimePasswords(httpClient, context)
+                users = apiClient.getUsers()
+                val otps = apiClient.getOneTimePasswords()
                 myOneTimePasswords = otps.myOneTimePasswords
                 val sharedOtps = HashMap<String, List<SharedOneTimePassword>>()
                 for (otp in otps.sharedOneTimePasswords) {
@@ -511,60 +500,43 @@ fun OneTimePasswords(
             context.triggerWidgetUpdate()
         }
     }
-    val loadUsers = {
-        coroutineScope.launch {
-            try {
-                users = getUsers(httpClient)
-            } catch (ex: Exception) {
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        loadUsers()
-    }
-
-    LaunchedEffect(Unit) {
-        loadOneTimePasswords()
-    }
 
     Scaffold(
-        contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp), topBar = {
-            TopAppBar(title = {
-                Text("Zwei-Faktor Codes")
-            }, scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(), actions = {
-                TopBarActions(goToSetup = goToSetup)
-            })
-        }, floatingActionButton = {
+        contentWindowInsets = WindowInsets(16.dp, 16.dp, 16.dp, 16.dp),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Zwei-Faktor Codes")
+                },
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(), actions = {
+                    TopBarActions(navController = navController)
+                }
+            )
+        },
+        floatingActionButton = {
             if (!isLoading && !loadingFailed && reachability.value == Reachability.Reachable) {
-                FloatingActionButton(onClick = {
-                    startScan()
-                }) {
+                FloatingActionButton(
+                    onClick = {
+                        startScan()
+                    }
+                ) {
                     Icon(ImageVector.vectorResource(R.drawable.ic_scan_code), "Neuen Code scannen")
                 }
             }
-        }, floatingActionButtonPosition = FabPosition.End
+        },
+        floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
         PullToRefreshBox(
-            isLoading, onRefresh = {
-                loadOneTimePasswords()
-            }, modifier = Modifier
+            isRefreshing = isLoading,
+            onRefresh = {
+                isLoading = true
+            },
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
             if (loadingFailed) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        "Laden fehlgeschlagen", style = MaterialTheme.typography.headlineLarge
-                    )
-                    Image(
-                        ImageBitmap.imageResource(R.mipmap.loading_error),
-                        contentDescription = "Laden fehlgeschlagen",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                LoadingFailed()
             } else {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
@@ -585,9 +557,12 @@ fun OneTimePasswords(
                         }
                     }
                     items(
-                        items = myOneTimePasswords, key = { otp -> otp.id }) { otp ->
+                        items = myOneTimePasswords,
+                        key = { otp -> otp.id }
+                    ) { otp ->
                         OneTimePasswordItem(
-                            otp = SimpleOneTimePassword.fromOneTimePassword(otp)
+                            otp = SimpleOneTimePassword
+                                .fromOneTimePassword(otp)
                                 .copy(canEdit = reachability.value == Reachability.Reachable),
                             users = users,
                             onShareSuccess = { sharedWith ->
@@ -602,9 +577,10 @@ fun OneTimePasswords(
                             },
                             onDeleteSuccess = {
                                 myOneTimePasswords -= otp
-                            })
+                            }
+                        )
                     }
-                    for (otp in sharedOneTimePasswords) {
+                    for ((who, otps) in sharedOneTimePasswords) {
                         stickyHeader {
                             Box(
                                 modifier = Modifier
@@ -612,14 +588,14 @@ fun OneTimePasswords(
                                     .fillMaxWidth()
                             ) {
                                 Text(
-                                    text = "Geteilt von ${otp.key}",
+                                    text = "Geteilt von $who",
                                     style = MaterialTheme.typography.titleLarge,
                                     modifier = Modifier.padding(vertical = 8.dp)
                                 )
                             }
                         }
                         items(
-                            items = otp.value, key = { otp -> otp.id }) { otp ->
+                            items = otps, key = { otp -> otp.id }) { otp ->
                             OneTimePasswordItem(
                                 SimpleOneTimePassword.fromSharedOneTimePassword(otp),
                             )

@@ -44,18 +44,16 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
-import dev.imanuel.jewels.detection.ServerSettings
-import dev.imanuel.jewels.detection.information.Device
-import dev.imanuel.jewels.detection.information.DeviceType
-import dev.imanuel.jewels.detection.information.InformationCollector
-import dev.imanuel.jewels.detection.loadSettings
+import dev.imanuel.jewels.pages.Jewels
 import dev.imanuel.jewels.pages.Login
 import dev.imanuel.jewels.pages.OneTimePasswords
 import dev.imanuel.jewels.pages.ServerSetup
-import dev.imanuel.jewels.pages.jewels.Jewels
-import dev.imanuel.jewels.pages.json
+import dev.imanuel.jewels.shared.ServerSettings
+import dev.imanuel.jewels.shared.information.Device
+import dev.imanuel.jewels.shared.information.DeviceType
+import dev.imanuel.jewels.shared.information.InformationCollector
+import dev.imanuel.jewels.shared.loadSettings
 import dev.imanuel.jewels.ui.theme.JewelsTheme
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.json.Json
 import org.koin.compose.koinInject
@@ -87,7 +85,7 @@ class MainActivity : ComponentActivity() {
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(notificationChannel)
 
-        val settings = loadSettings(this)
+        val settings = loadSettings()
         if (settings != null) {
             val request = PutDataRequest.create("/settings").setUrgent().apply {
                 data = Json.encodeToString(ServerSettings.serializer(), settings).toByteArray()
@@ -135,17 +133,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainComposable(
     context: Context = koinInject(),
     collector: InformationCollector = koinInject(),
+    json: Json = koinInject()
 ) {
     val navController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
 
-    val settings = remember { loadSettings(context) }
+    val settings = remember { context.loadSettings() }
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStack?.destination?.route
 
@@ -162,57 +160,53 @@ fun MainComposable(
     }
 
     LaunchedEffect(handheld) {
-        coroutineScope.launch {
-            handheld = collector.collect(DeviceType.Handheld)
-        }
+        handheld = collector.collect(DeviceType.Handheld)
     }
     LaunchedEffect(watch) {
-        coroutineScope.launch {
-            try {
-                val dataClient by lazy { Wearable.getDataClient(context) }
-                val nodeClient by lazy { Wearable.getNodeClient(context) }
+        try {
+            val dataClient by lazy { Wearable.getDataClient(context) }
+            val nodeClient by lazy { Wearable.getNodeClient(context) }
 
-                if (nodeClient.connectedNodes.await().isNotEmpty()) {
-                    dataClient
-                        .dataItems
-                        .await()
-                        .firstOrNull { it.uri.path == "/wear-device" }
-                        .let { item ->
-                            if (item != null) {
-                                val data = item.data
-                                if (data != null) {
-                                    watch = json.decodeFromString(
-                                        Device.serializer(),
-                                        data.decodeToString()
-                                    )
-                                }
-                            }
-
-                            dataClient.addListener { events ->
-                                events
-                                    .filter { it.dataItem.uri.path == "/wear-device" }
-                                    .forEach { event ->
-                                        if (event.type == DataEvent.TYPE_CHANGED) {
-                                            val data = event.dataItem.data
-                                            watch = if (data != null) {
-                                                Json.decodeFromString(
-                                                    Device.serializer(),
-                                                    data.decodeToString()
-                                                )
-                                            } else {
-                                                null
-                                            }
-                                        } else if (event.type == DataEvent.TYPE_DELETED) {
-                                            watch = null
-                                        }
-                                    }
+            if (nodeClient.connectedNodes.await().isNotEmpty()) {
+                dataClient
+                    .dataItems
+                    .await()
+                    .firstOrNull { it.uri.path == "/wear-device" }
+                    .let { item ->
+                        if (item != null) {
+                            val data = item.data
+                            if (data != null) {
+                                watch = json.decodeFromString(
+                                    Device.serializer(),
+                                    data.decodeToString()
+                                )
                             }
                         }
-                }
-            } catch (e: ApiException) {
-                if (e.statusCode == 17) {
-                    Log.i("MainComposable", "MainComposable: No wearable api available")
-                }
+
+                        dataClient.addListener { events ->
+                            events
+                                .filter { it.dataItem.uri.path == "/wear-device" }
+                                .forEach { event ->
+                                    if (event.type == DataEvent.TYPE_CHANGED) {
+                                        val data = event.dataItem.data
+                                        watch = if (data != null) {
+                                            Json.decodeFromString(
+                                                Device.serializer(),
+                                                data.decodeToString()
+                                            )
+                                        } else {
+                                            null
+                                        }
+                                    } else if (event.type == DataEvent.TYPE_DELETED) {
+                                        watch = null
+                                    }
+                                }
+                        }
+                    }
+            }
+        } catch (e: ApiException) {
+            if (e.statusCode == 17) {
+                Log.i("MainComposable", "MainComposable: No wearable api available")
             }
         }
     }
@@ -232,27 +226,19 @@ fun MainComposable(
                 Jewels(
                     watch = watch,
                     handheld = handheld,
-                    goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
+                    navController = navController,
+                )
             }
             composable(NavigationPage.OneTimePasswords.name) {
                 OneTimePasswords(
-                    goToSetup = { navController.navigate(NavigationPage.ServerSetup.name) })
+                    navController = navController,
+                )
             }
             composable(NavigationPage.ServerSetup.name) {
-                ServerSetup(goToLogin = {
-                    navController.navigate(
-                        NavigationPage.Login.name
-                    )
-                })
+                ServerSetup(navController = navController)
             }
             composable(NavigationPage.Login.name) {
-                Login(
-                    goToJewels = {
-                        navController.navigate(NavigationPage.Jewels.name)
-                    },
-                    goToSetup = {
-                        navController.navigate(NavigationPage.ServerSetup.name)
-                    })
+                Login(navController = navController)
             }
         }
     }
@@ -275,7 +261,8 @@ fun MainComposable(
                         label = { Text("Jewels") },
                         icon = {
                             Icon(ImageVector.vectorResource(R.drawable.ic_jewels), "Jewels")
-                        })
+                        }
+                    )
                     NavigationSuiteItem(
                         onClick = {
                             navController.navigate(NavigationPage.OneTimePasswords.name)
@@ -287,7 +274,8 @@ fun MainComposable(
                                 ImageVector.vectorResource(R.drawable.ic_otp),
                                 "Zwei-Faktor Codes"
                             )
-                        })
+                        }
+                    )
                 }
             ) {
                 navHost()
