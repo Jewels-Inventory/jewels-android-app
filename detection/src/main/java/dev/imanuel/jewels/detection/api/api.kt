@@ -1,7 +1,6 @@
-package dev.imanuel.jewels.api
+package dev.imanuel.jewels.detection.api
 
 import android.content.Context
-import dev.imanuel.jewels.pages.json
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -13,8 +12,13 @@ import io.ktor.client.request.url
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import kotlin.concurrent.thread
 import dev.imanuel.jewels.detection.information.Device as DeviceInformation
+
+val json = Json {
+    ignoreUnknownKeys = true
+}
 
 suspend fun checkServer(httpClient: HttpClient): Boolean {
     val res = httpClient.get {

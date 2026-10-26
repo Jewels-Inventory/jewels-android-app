@@ -103,9 +103,9 @@ android {
 
 dependencies {
     implementation(project(":detection"))
+    implementation(libs.androidx.compose.material3)
 
     implementation(libs.play.services.wearable)
-    implementation(libs.androidx.wear.compose.material)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
@@ -113,7 +113,6 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.material3.material3)
 
     implementation(libs.org.jetbrains.kotlinx.serialization.json)
     implementation(libs.org.jetbrains.kotlinx.coroutines.core)
@@ -121,6 +120,14 @@ dependencies {
     implementation(libs.org.jetbrains.kotlinx.coroutines.android)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.core.splashscreen)
+
+    implementation(libs.io.coil.compose)
+    implementation(libs.io.coil.network.okhttp)
+    implementation(libs.io.coil.coil.svg)
+
+    implementation(libs.io.ktor.client.core)
+
+    implementation(libs.kotlin.onetimepassword)
 
     implementation(platform(libs.io.insert.koin.bom))
     implementation(libs.io.insert.koin.core)

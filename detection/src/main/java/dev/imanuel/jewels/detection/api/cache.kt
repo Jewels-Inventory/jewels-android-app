@@ -1,4 +1,4 @@
-package dev.imanuel.jewels.api
+package dev.imanuel.jewels.detection.api
 
 import android.content.Context
 import com.google.crypto.tink.Aead

@@ -48,5 +48,7 @@ dependencies {
     implementation(libs.io.insert.koin.core)
     implementation(libs.io.insert.koin.androidx.workmanager)
 
+    implementation(libs.tink.android)
+
     api(libs.androidx.work.runtime)
 }

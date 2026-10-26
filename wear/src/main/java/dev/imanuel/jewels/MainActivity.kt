@@ -2,13 +2,11 @@ package dev.imanuel.jewels
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,17 +16,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
-import dev.imanuel.jewels.detection.SendDataWorker
 import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.detection.deleteSettings
 import dev.imanuel.jewels.detection.information.Device
@@ -118,26 +113,21 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
     }
 
     JewelsTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
+        AppScaffold {
             if (settings == null) {
-                Text("Bitte melde dich am Telefon an")
-            } else if (deviceInformation != null) {
-                Button(onClick = {
-                    val request = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
-                        workDataOf(
-                            "type" to DeviceType.Watch.ordinal
-                        )
-                    ).build()
-                    WorkManager.getInstance(context).enqueue(request)
-                    Toast.makeText(context, "Daten werden hochgeladen", Toast.LENGTH_LONG).show()
-                }) {
-                    Text("Daten hochladen")
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "Bitte melde dich am Telefon an",
+                        textAlign = TextAlign.Center
+                    )
                 }
+            } else {
+                PageOtpScreen()
             }
         }
     }

@@ -27,8 +27,8 @@ import androidx.glance.layout.padding
 import androidx.glance.text.FontFamily
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import dev.imanuel.jewels.api.SimpleOneTimePassword
-import dev.imanuel.jewels.api.getOneTimePasswords
+import dev.imanuel.jewels.detection.api.SimpleOneTimePassword
+import dev.imanuel.jewels.detection.api.getOneTimePasswords
 import dev.imanuel.jewels.pages.generateOtp
 import io.ktor.client.HttpClient
 import org.koin.core.context.GlobalContext

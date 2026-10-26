@@ -37,7 +37,7 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import dev.imanuel.jewels.R
-import dev.imanuel.jewels.api.getMyJewels
+import dev.imanuel.jewels.detection.api.getMyJewels
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType
 import dev.imanuel.jewels.pages.components.TopBarActions

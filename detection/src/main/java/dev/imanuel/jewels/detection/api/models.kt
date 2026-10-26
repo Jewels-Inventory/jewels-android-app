@@ -1,11 +1,9 @@
 @file:OptIn(ExperimentalSerializationApi::class)
 
-package dev.imanuel.jewels.api
+package dev.imanuel.jewels.detection.api
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import kotlin.time.Instant
 
 @Serializable

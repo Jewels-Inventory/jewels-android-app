@@ -69,16 +69,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.glance.appwidget.updateAll
 import coil3.compose.AsyncImage
 import dev.imanuel.jewels.R
-import dev.imanuel.jewels.api.OneTimePassword
-import dev.imanuel.jewels.api.SharedOneTimePassword
-import dev.imanuel.jewels.api.SimpleOneTimePassword
-import dev.imanuel.jewels.api.User
-import dev.imanuel.jewels.api.createOneTimePassword
-import dev.imanuel.jewels.api.deleteOneTimePassword
-import dev.imanuel.jewels.api.getOneTimePasswords
-import dev.imanuel.jewels.api.getUsers
-import dev.imanuel.jewels.api.shareOneTimePassword
-import dev.imanuel.jewels.api.updateOneTimePassword
+import dev.imanuel.jewels.detection.api.OneTimePassword
+import dev.imanuel.jewels.detection.api.SharedOneTimePassword
+import dev.imanuel.jewels.detection.api.SimpleOneTimePassword
+import dev.imanuel.jewels.detection.api.User
+import dev.imanuel.jewels.detection.api.createOneTimePassword
+import dev.imanuel.jewels.detection.api.deleteOneTimePassword
+import dev.imanuel.jewels.detection.api.getOneTimePasswords
+import dev.imanuel.jewels.detection.api.getUsers
+import dev.imanuel.jewels.detection.api.shareOneTimePassword
+import dev.imanuel.jewels.detection.api.updateOneTimePassword
 import dev.imanuel.jewels.detection.ServerSettings
 import dev.imanuel.jewels.pages.components.TopBarActions
 import dev.imanuel.jewels.utils.insertSortedBy
@@ -92,6 +92,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 
 fun generateOtp(secretKey: String): String {
     return GoogleAuthenticator(secretKey.encodeToByteArray()).generate()
@@ -100,7 +101,6 @@ fun generateOtp(secretKey: String): String {
 suspend fun Context.triggerWidgetUpdate() {
     OneTimePasswordWidget().updateAll(this)
 }
-
 
 data class CurrentState(val code: String, val secondsRemaining: Int)
 
@@ -126,7 +126,7 @@ fun rememberTotpState(
                 state.value = CurrentState(state.value.code, secondsRemaining)
             }
 
-            delay(1_000)
+            delay(1_000.milliseconds)
         }
     }
 

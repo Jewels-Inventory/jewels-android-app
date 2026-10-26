@@ -17,7 +17,6 @@ class SettingsViewModel(@SuppressLint("StaticFieldLeak") private val context: Co
     DataClient.OnDataChangedListener {
     private var _settings: MutableState<ServerSettings?> = mutableStateOf(null)
 
-
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents
             .filter { it.type == DataEvent.TYPE_CHANGED && it.dataItem.uri.path == "/settings" }

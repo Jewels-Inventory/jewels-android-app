@@ -14,8 +14,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.android.gms.common.util.DeviceProperties.isTablet
-import dev.imanuel.jewels.api.checkServer
-import dev.imanuel.jewels.api.getCached
+import dev.imanuel.jewels.detection.api.checkServer
 import dev.imanuel.jewels.detection.SendDataWorker
 import dev.imanuel.jewels.detection.information.Device
 import dev.imanuel.jewels.detection.information.DeviceType

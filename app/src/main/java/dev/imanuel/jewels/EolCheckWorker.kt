@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import dev.imanuel.jewels.api.getEolDevices
+import dev.imanuel.jewels.detection.api.getEolDevices
 import io.ktor.client.HttpClient
 
 class EolCheckWorker(
