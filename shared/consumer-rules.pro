@@ -1,0 +1,1 @@
+-keep class dev.imanuel.jewels.shared.KoinKt

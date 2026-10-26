@@ -6,8 +6,8 @@ import android.content.Intent
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import dev.imanuel.jewels.detection.SendDataWorker
-import dev.imanuel.jewels.detection.information.DeviceType
+import dev.imanuel.jewels.shared.SendDataWorker
+import dev.imanuel.jewels.shared.information.DeviceType
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

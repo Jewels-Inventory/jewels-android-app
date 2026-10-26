@@ -102,7 +102,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":detection"))
+    implementation(project(":shared"))
     implementation(libs.androidx.compose.material3)
 
     implementation(libs.play.services.wearable)

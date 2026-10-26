@@ -9,16 +9,16 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.android.gms.common.util.DeviceProperties.isTablet
-import dev.imanuel.jewels.detection.api.checkServer
-import dev.imanuel.jewels.detection.SendDataWorker
-import dev.imanuel.jewels.detection.information.Device
-import dev.imanuel.jewels.detection.information.DeviceType
-import io.ktor.client.HttpClient
+import dev.imanuel.jewels.shared.SendDataWorker
+import dev.imanuel.jewels.shared.api.ApiClient
+import dev.imanuel.jewels.shared.information.Device
+import dev.imanuel.jewels.shared.information.DeviceType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.currentCoroutineContext
@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.isActive
 import kotlinx.serialization.json.Json
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 
 enum class HandheldType {
     Tablet,
@@ -47,28 +48,31 @@ enum class HandheldType {
 }
 
 @Composable
-fun getHandheldType(context: Context = koinInject()): HandheldType {
-    return if (isTablet(context)) {
+fun getHandheldType(): HandheldType {
+    return if (isTablet(LocalContext.current)) {
         HandheldType.Tablet
     } else {
         HandheldType.Smartphone
     }
 }
 
-fun uploadData(handheldType: HandheldType, device: Device, context: Context) {
+fun Context.uploadData(handheldType: HandheldType, device: Device) {
     val wearableRequest = OneTimeWorkRequestBuilder<SendDataWorker>().setInputData(
         workDataOf(
             "data" to Json.encodeToString(Device.serializer(), device)
         )
     ).build()
-    WorkManager.getInstance(context).enqueue(wearableRequest)
-    Toast.makeText(
-        context, if (device.type == DeviceType.Handheld) {
-            "Infos vom $handheldType werden hochgeladen"
-        } else {
-            "Infos von der Smartwatch werden hochgeladen"
-        }, Toast.LENGTH_LONG
-    )
+    WorkManager.getInstance(this).enqueue(wearableRequest)
+    Toast
+        .makeText(
+            this,
+            if (device.type == DeviceType.Handheld) {
+                "Infos vom $handheldType werden hochgeladen"
+            } else {
+                "Infos von der Smartwatch werden hochgeladen"
+            },
+            Toast.LENGTH_LONG
+        )
         .show()
 }
 
@@ -118,11 +122,11 @@ enum class Reachability {
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun rememberReachability(
-    httpClient: HttpClient = koinInject(),
-    context: Context = koinInject(),
+    apiClient: ApiClient = koinInject(),
     probeIntervalMs: Long = 15_000L,
 ): State<Reachability> {
-    val reachabilityFlow = remember(httpClient, probeIntervalMs) {
+    val context = LocalContext.current
+    val reachabilityFlow = remember(apiClient, probeIntervalMs) {
         context
             .networkStatusFlow()
             .distinctUntilChanged()
@@ -133,9 +137,9 @@ fun rememberReachability(
                     flow {
                         emit(Reachability.Checking)
                         while (currentCoroutineContext().isActive) {
-                            val ok = checkServer(httpClient)
+                            val ok = apiClient.checkServer()
                             emit(if (ok) Reachability.Reachable else Reachability.Unreachable)
-                            delay(probeIntervalMs)
+                            delay(probeIntervalMs.milliseconds)
                         }
                     }
                 }
@@ -152,8 +156,4 @@ infix fun Double.format(fmt: String): String {
 
 infix fun Float.format(fmt: String): String {
     return "%${fmt}".format(this)
-}
-
-val json = Json {
-    ignoreUnknownKeys = true
 }

@@ -24,12 +24,12 @@ import androidx.wear.compose.material3.Text
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
-import dev.imanuel.jewels.detection.ServerSettings
-import dev.imanuel.jewels.detection.deleteSettings
-import dev.imanuel.jewels.detection.information.Device
-import dev.imanuel.jewels.detection.information.DeviceType
-import dev.imanuel.jewels.detection.information.InformationCollector
-import dev.imanuel.jewels.detection.saveSettings
+import dev.imanuel.jewels.shared.ServerSettings
+import dev.imanuel.jewels.shared.deleteSettings
+import dev.imanuel.jewels.shared.information.Device
+import dev.imanuel.jewels.shared.information.DeviceType
+import dev.imanuel.jewels.shared.information.InformationCollector
+import dev.imanuel.jewels.shared.saveSettings
 import dev.imanuel.jewels.theme.JewelsTheme
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -81,7 +81,7 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
                                 ServerSettings.serializer(),
                                 data.decodeToString()
                             )
-                            saveSettings(settings!!, context)
+                            context.saveSettings(settings!!)
                         }
                     }
 
@@ -97,13 +97,13 @@ fun WearApp(context: Context = koinInject(), collector: InformationCollector = k
                                                 ServerSettings.serializer(),
                                                 data.decodeToString()
                                             )
-                                        saveSettings(settings!!, context)
+                                        context.saveSettings(settings!!)
                                     } else {
                                         settings = null
-                                        deleteSettings(context)
+                                        context.deleteSettings()
                                     }
                                 } else if (event.type == DataEvent.TYPE_DELETED) {
-                                    deleteSettings(context)
+                                    context.deleteSettings()
                                     settings = null
                                 }
                             }

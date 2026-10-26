@@ -1,1 +1,0 @@
--keep class dev.imanuel.jewels.detection.KoinKt

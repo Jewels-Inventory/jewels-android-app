@@ -27,10 +27,9 @@ import androidx.glance.layout.padding
 import androidx.glance.text.FontFamily
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import dev.imanuel.jewels.detection.api.SimpleOneTimePassword
-import dev.imanuel.jewels.detection.api.getOneTimePasswords
-import dev.imanuel.jewels.pages.generateOtp
-import io.ktor.client.HttpClient
+import dev.imanuel.jewels.shared.api.ApiClient
+import dev.imanuel.jewels.shared.api.SimpleOneTimePassword
+import dev.imanuel.jewels.shared.otp.generateOtp
 import org.koin.core.context.GlobalContext
 
 class RefreshOtpAction : ActionCallback {
@@ -43,9 +42,8 @@ class RefreshOtpAction : ActionCallback {
 
 class OneTimePasswordWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val res = getOneTimePasswords(
-            GlobalContext.get().get<HttpClient>(), context
-        )
+        val apiClient = GlobalContext.get().get<ApiClient>()
+        val res = apiClient.getOneTimePasswords()
 
         val passwords = (res.myOneTimePasswords.map {
             SimpleOneTimePassword.fromOneTimePassword(it)
