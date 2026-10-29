@@ -1,7 +1,7 @@
 [versions]
 accompanistPermissions = "0.37.3"
 adaptiveAndroid = "1.3.0"
-agp = "9.4.1"
+agp = "9.5.0"
 composeMaterial = "1.7.1"
 coreSplashscreen = "1.2.0"
 kotlin = "2.4.21"
